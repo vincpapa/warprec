@@ -1,0 +1,57 @@
+reader:
+  loading_strategy: dataset
+  data_type: transaction
+  reading_method: local
+  local_path: datasets/amazon_digital_music/amazon_digital_music.inter 
+  rating_type: explicit
+  sep: '\t'
+  labels:
+    user_id_label: user_id:token
+    item_id_label: track_id:token
+    rating_label: rating:float
+    timestamp_label: timestamp:float
+  dtypes:
+    user_id_type: int64
+    item_id_type: int64
+    rating_type: float32
+    timestamp_type: float64
+writer:
+  dataset_name: Amazon Digital Music
+  writing_method: local
+  local_experiment_path: experiment/test/amazon_digital_music
+  save_split: True
+  split:
+    labels:
+      user_id_label: user_id:token
+      item_id_label: track_id:token
+      rating_label: rating:float
+      timestamp_label: timestamp:float
+splitter:
+  test_splitting:
+    strategy: temporal_holdout
+    ratio: 0.1
+models:
+  BPR:
+    embedding_size: 512
+    reg_weight: 0.0001
+    batch_size: 2048
+    epochs: 100
+    learning_rate: 0.001
+evaluation:
+  full_evaluation_on_report: True
+  validation_metric: nDCG@10
+  top_k: [10]
+  metrics: [nDCG, Recall, EPC, Gini]
+  strategy: sampled
+  num_negatives: 100
+  batch_size: 1024
+  seed: 42
+  stat_significance:
+    wilcoxon_test: True
+    paired_t_test: True
+    corrections:
+      bonferroni: True
+general:
+  device: cuda
+  cuda_visible_devices: [0]
+  time_report: False
