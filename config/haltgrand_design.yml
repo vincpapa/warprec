@@ -50,7 +50,7 @@ models:
       patience: 20
       grace_period: 20
     embedding_size: 64
-    n_layers: [2, 4, 6, 8]
+    n_layers: [6]
     diffusion_step: 0.0        # 0 => auto h = 1/(2*rho), the stable Euler step
     eps_delta: 0.5             # regularized excess-degree constant, in (0, 1]
     n_probes: 20               # P, Rademacher probes for the E_hat estimator
