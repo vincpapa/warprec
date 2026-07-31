@@ -97,8 +97,10 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         radius), ``h`` (the stable Euler step), ``phi0`` (the frozen Perron
         vector buffer), ``user_anchor_idx``/``item_anchor_idx`` (the frozen
         anchor node indices buffers), ``e_hat`` (the frozen, probe-based
-        exploitability signal buffer), and ``degree`` (the frozen raw node
-        degree buffer, used only for diagnostics).
+        exploitability signal buffer), ``degree`` (the frozen raw node degree
+        buffer, used only for diagnostics), and ``kbar_sample_user_idx``/
+        ``kbar_sample_item_idx`` (the frozen, uniformly-sampled node indices
+        used by the per-epoch k_bar diagnostic).
     """
 
     DATALOADER_TYPE = DataLoaderType.POS_NEG_LOADER
@@ -110,7 +112,20 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
     _ANCHOR_SEED = 1000
     _POWER_MAX_ITER = 1000
     _POWER_TOL = 1e-10
-    _KBAR_LOG_EVERY_N_EPOCHS = 20
+    _KBAR_LOG_EVERY_N_EPOCHS = 1
+    _KBAR_HISTOGRAM_EVERY_N_EPOCHS = 5
+    _KBAR_SAMPLE_SIZE = 10000
+    _KBAR_SAMPLE_SEED = 2000
+    _KBAR_HIST_BINS = 12
+    _KBAR_HIST_BAR_WIDTH = 50
+    _KBAR_THRESHOLD_BINS = (
+        ("frac_stopped", 0.0, 0.01),
+        ("frac_quasi", 0.01, 0.1),
+        ("frac_low", 0.1, 0.5),
+        ("frac_med", 0.5, 1.5),
+        ("frac_high", 1.5, 3.0),
+        ("frac_vhigh", 3.0, float("inf")),
+    )
 
     # Model hyperparameters
     embedding_size: int
@@ -166,6 +181,18 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         # and the resolved CSV path (cached so every row lands in the same file).
         self._last_kbar_log_epoch: int = -1
         self._kbar_csv_path: Optional[str] = None
+
+        # Per-epoch loss accumulators for the same diagnostic (reset in
+        # `on_train_epoch_start`, accumulated in `training_step`, averaged and
+        # read in `_log_kbar_diagnostics`). Bookkeeping only: read-only scalars
+        # (`.item()`), never fed back into the loss/gradient computation.
+        self._epoch_loss_sums: Dict[str, float] = {
+            "total": 0.0,
+            "bpr": 0.0,
+            "ponder": 0.0,
+            "unif": 0.0,
+        }
+        self._epoch_batch_count: int = 0
 
     # ------------------------------------------------------------------ #
     # One-time precompute (graph-only, does not depend on the embeddings)
@@ -276,6 +303,20 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         self.e_hat: Tensor
         self.register_buffer("e_hat", e_hat)
 
+        # Fixed, uniformly-random node sample for the per-epoch k_bar
+        # diagnostic (see `_log_kbar_diagnostics`): frozen after init (same
+        # seed every time), so the same nodes are compared across epochs.
+        kbar_sample_user_idx = self._sample_fixed_diagnostic_nodes(
+            n_users, offset=0, seed=self._KBAR_SAMPLE_SEED
+        )
+        kbar_sample_item_idx = self._sample_fixed_diagnostic_nodes(
+            n_items, offset=n_users, seed=self._KBAR_SAMPLE_SEED + 1
+        )
+        self.kbar_sample_user_idx: Tensor
+        self.kbar_sample_item_idx: Tensor
+        self.register_buffer("kbar_sample_user_idx", kbar_sample_user_idx)
+        self.register_buffer("kbar_sample_item_idx", kbar_sample_item_idx)
+
     def _power_iteration(
         self, b_delta: SparseTensor, n_nodes: int
     ) -> Tuple[float, Tensor]:
@@ -342,6 +383,32 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
             ]
             chosen.append(pick)
         return (torch.cat(chosen) + offset).long()
+
+    def _sample_fixed_diagnostic_nodes(
+        self, n_type_nodes: int, offset: int, seed: int
+    ) -> Tensor:
+        """Sample a fixed, uniformly-random subset of node indices of one
+        type, for the per-epoch k_bar diagnostic. Frozen after init (same
+        seed every time), so the same nodes are compared across epochs.
+        Unlike anchor sampling, this is a plain uniform sample (not
+        degree-stratified): the diagnostic wants a representative read of the
+        whole population's k_bar distribution, not deliberate coverage of the
+        degree spectrum.
+
+        Args:
+            n_type_nodes (int): The number of nodes of this type.
+            offset (int): The global node-index offset (0 for users, n_users
+                for items).
+            seed (int): The fixed seed used to freeze the sample.
+
+        Returns:
+            Tensor: The (min(_KBAR_SAMPLE_SIZE, n_type_nodes),) global node
+                indices.
+        """
+        sample_size = min(self._KBAR_SAMPLE_SIZE, n_type_nodes)
+        generator = torch.Generator().manual_seed(seed)
+        local_idx = torch.randperm(n_type_nodes, generator=generator)[:sample_size]
+        return (local_idx + offset).long()
 
     def _estimate_exploitability(
         self,
@@ -672,6 +739,26 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
 
         return z_user, z_pos, z_neg, k_bar_active, z0_user, z0_item
 
+    def _kbar_for_nodes(self, node_idx: Tensor) -> Tensor:
+        """Compute k_bar (expected propagation depth) for specific node
+        indices only, reusing the same batch-scoped machinery as training
+        (``_mix``) rather than the full-graph ``forward()``: the propagation
+        itself still runs over the whole graph (message passing requires
+        it), but the survival controller/specificity computation is
+        restricted to ``node_idx``.
+
+        Args:
+            node_idx (Tensor): The global node indices to compute k_bar for.
+
+        Returns:
+            Tensor: The (len(node_idx),) expected depth.
+        """
+        x = self._ego_embeddings()
+        z_list = self._propagate(x)
+        coeff = self._consensus(z_list[0])
+        _, k_bar = self._mix(z_list, coeff, node_idx)
+        return k_bar
+
     def get_dataloader(
         self,
         interactions: Interactions,
@@ -725,13 +812,20 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
             self._uniformity_loss(z0_user) + self._uniformity_loss(z0_item)
         )
 
-        loss = (
-            bpr_loss
-            + reg_loss
-            + self.lambda_ponder * ponder_loss
-            + self.lambda_unif * unif_loss
-        )
+        weighted_ponder_loss = self.lambda_ponder * ponder_loss
+        weighted_unif_loss = self.lambda_unif * unif_loss
+        loss = bpr_loss + reg_loss + weighted_ponder_loss + weighted_unif_loss
         self.log("loss", loss, prog_bar=True, on_step=False, on_epoch=True)
+
+        # Bookkeeping only (detached scalars) for the per-epoch k_bar
+        # diagnostic (see `_log_kbar_diagnostics`); never fed back into loss
+        # or gradients.
+        self._epoch_loss_sums["total"] += loss.item()
+        self._epoch_loss_sums["bpr"] += bpr_loss.item()
+        self._epoch_loss_sums["ponder"] += weighted_ponder_loss.item()
+        self._epoch_loss_sums["unif"] += weighted_unif_loss.item()
+        self._epoch_batch_count += 1
+
         return loss
 
     def predict(
@@ -768,22 +862,40 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
 
     # ------------------------------------------------------------------ #
     # Read-only k_bar (expected propagation depth) diagnostic, logged every
-    # `_KBAR_LOG_EVERY_N_EPOCHS` epochs and once more at the end of training.
-    # Never touches gradients or parameters, and has no effect on training.
+    # `_KBAR_LOG_EVERY_N_EPOCHS` epochs (default: every epoch) and once more
+    # at the end of training. Never touches gradients or parameters, and has
+    # no effect on training. Uses the REAL survival weights from the
+    # controller (no isotonic projection is implemented for k_bar).
     # ------------------------------------------------------------------ #
     _KBAR_CSV_FIELDNAMES = [
         "epoch",
-        "node_type",
+        "type",
         "mean",
         "std",
+        "p10",
+        "p25",
+        "p50",
+        "p75",
+        "p90",
+        "p95",
+        "p99",
         "min",
         "max",
-        "p10",
-        "p50",
-        "p90",
-        "spearman_corr_with_degree",
-        "spearman_pvalue",
+        "frac_stopped",
+        "frac_quasi",
+        "frac_low",
+        "frac_med",
+        "frac_high",
+        "frac_vhigh",
+        "spearman_deg",
+        "alpha",
+        "loss_total",
+        "loss_bpr",
+        "loss_ponder",
+        "loss_unif",
+        "val_ndcg",
     ]
+    _KBAR_QUANTILE_LEVELS = (0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99)
 
     def _kbar_stats(self, values: Tensor) -> Dict[str, float]:
         """Compute summary statistics of a 1-D tensor of k_bar values.
@@ -792,21 +904,92 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
             values (Tensor): The (n,) tensor of per-node expected depths.
 
         Returns:
-            Dict[str, float]: mean, std, min, max, and the 10th/50th/90th
-                percentiles.
+            Dict[str, float]: mean, std, min, max, and the 10th/25th/50th/
+                75th/90th/95th/99th percentiles.
         """
         quantiles = torch.quantile(
-            values, torch.tensor([0.1, 0.5, 0.9], dtype=values.dtype)
+            values, torch.tensor(self._KBAR_QUANTILE_LEVELS, dtype=values.dtype)
         )
-        return {
+        stats = {
             "mean": values.mean().item(),
             "std": values.std().item(),
             "min": values.min().item(),
             "max": values.max().item(),
-            "p10": quantiles[0].item(),
-            "p50": quantiles[1].item(),
-            "p90": quantiles[2].item(),
         }
+        for level, quantile in zip(self._KBAR_QUANTILE_LEVELS, quantiles):
+            stats[f"p{round(level * 100)}"] = quantile.item()
+        return stats
+
+    def _kbar_threshold_fractions(self, values: Tensor) -> Dict[str, float]:
+        """Compute the fraction of values in each fixed k_bar threshold bin,
+        to reveal a bimodal distribution (mass concentrated at both ends,
+        empty middle) that percentiles alone can hide.
+
+        Args:
+            values (Tensor): The (n,) tensor of per-node expected depths.
+
+        Returns:
+            Dict[str, float]: One fraction per named bin in
+                ``_KBAR_THRESHOLD_BINS``.
+        """
+        n = values.numel()
+        fractions = {}
+        for name, lower, upper in self._KBAR_THRESHOLD_BINS:
+            count = ((values >= lower) & (values < upper)).sum().item()
+            fractions[name] = count / n if n > 0 else float("nan")
+        return fractions
+
+    def _kbar_text_histogram(self, values: Tensor, k_max: int) -> List[str]:
+        """Build a compact ASCII histogram of k_bar over [0, k_max], for a
+        quick visual read of the distribution's shape.
+
+        Args:
+            values (Tensor): The (n,) tensor of per-node expected depths.
+            k_max (int): The upper edge of the histogram range (n_layers).
+
+        Returns:
+            List[str]: One formatted line per histogram bin.
+        """
+        counts = torch.histc(
+            values.float(), bins=self._KBAR_HIST_BINS, min=0.0, max=float(k_max)
+        )
+        bin_edges = torch.linspace(0, k_max, self._KBAR_HIST_BINS + 1)
+        max_count = counts.max().item()
+
+        lines = []
+        for i in range(self._KBAR_HIST_BINS):
+            lo, hi = bin_edges[i].item(), bin_edges[i + 1].item()
+            bar_len = (
+                int(round(counts[i].item() / max_count * self._KBAR_HIST_BAR_WIDTH))
+                if max_count > 0
+                else 0
+            )
+            lines.append(f"[{lo:.1f}-{hi:.1f}] {'#' * bar_len} {int(counts[i].item())}")
+        return lines
+
+    def _lookup_latest_val_ndcg(self) -> Optional[float]:
+        """Best-effort lookup of the most recently logged validation nDCG
+        metric from ``self.trainer.callback_metrics`` (populated by
+        ``WarpRecLightningIntegrationCallback.on_validation_epoch_end``).
+        Since validation runs AFTER ``on_train_epoch_end`` within a given
+        epoch, this may reflect the previous epoch's validation pass rather
+        than the current one. Never raises: returns None if unavailable (no
+        attached Trainer, or no matching metric logged yet).
+
+        Returns:
+            Optional[float]: The metric value, or None if not found.
+        """
+        try:
+            metrics = self.trainer.callback_metrics
+        except RuntimeError:
+            return None
+        for key, value in metrics.items():
+            if "ndcg" in key.lower():
+                try:
+                    return float(value)
+                except (TypeError, ValueError):
+                    return None
+        return None
 
     def _append_kbar_csv(self, rows: List[Dict[str, Any]]) -> None:
         """Best-effort append of k_bar diagnostic rows to a per-run CSV file.
@@ -818,7 +1001,7 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
                 matching ``_KBAR_CSV_FIELDNAMES``.
         """
         if self._kbar_csv_path is None:
-            self._kbar_csv_path = f"haltgrand_kbar_diagnostics_{self.name_param}.csv"
+            self._kbar_csv_path = "kbar_per_epoch.csv"
 
         try:
             write_header = not os.path.exists(self._kbar_csv_path)
@@ -840,11 +1023,22 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
             )
 
     def _log_kbar_diagnostics(self, epoch: int) -> None:
-        """Log the distribution of the expected propagation depth ``k_bar_v``
-        (Eq. 23, the same quantity the ponder loss already averages per
-        minibatch), computed via a full-graph, no-grad forward pass, separately
-        for users and items, together with its Spearman correlation against
-        raw node degree.
+        """Log the k_bar (expected propagation depth, Eq. 23) diagnostic for
+        this epoch: summary statistics, the fraction of nodes in each fixed
+        k_bar threshold bin (reveals a bimodal distribution that percentiles
+        alone can hide), a compact ASCII histogram (every
+        ``_KBAR_HISTOGRAM_EVERY_N_EPOCHS`` epochs only, to limit log
+        verbosity), the current ``alpha``, this epoch's average loss (total
+        and BPR/ponder/uniformity components), and the most recently
+        available validation nDCG (best-effort, see
+        ``_lookup_latest_val_ndcg``).
+
+        Computed on the FIXED, uniformly-sampled node subset from precompute
+        (``kbar_sample_user_idx``/``kbar_sample_item_idx``, up to
+        ``_KBAR_SAMPLE_SIZE`` nodes per type, same nodes every epoch), not the
+        full graph: the propagation itself still runs over the whole graph
+        (message passing requires it; see ``_kbar_for_nodes``), only the
+        controller/specificity computation is scoped to the sample.
 
         Args:
             epoch (int): The (1-indexed, human-facing) epoch number to
@@ -857,35 +1051,74 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         self._last_kbar_log_epoch = epoch
 
         with torch.no_grad():
-            _, _, k_bar = self.forward()
+            k_bar_user = self._kbar_for_nodes(self.kbar_sample_user_idx).cpu()
+            k_bar_item = self._kbar_for_nodes(self.kbar_sample_item_idx).cpu()
 
-        k_bar = k_bar.detach()
-        degree = self.degree.detach()
+        alpha = F.softplus(self.alpha_hat).item()
+        n_batches = max(self._epoch_batch_count, 1)
+        loss_total = self._epoch_loss_sums["total"] / n_batches
+        loss_bpr = self._epoch_loss_sums["bpr"] / n_batches
+        loss_ponder = self._epoch_loss_sums["ponder"] / n_batches
+        loss_unif = self._epoch_loss_sums["unif"] / n_batches
+        val_ndcg = self._lookup_latest_val_ndcg()
+        show_histogram = epoch % self._KBAR_HISTOGRAM_EVERY_N_EPOCHS == 0
+        degree = self.degree.detach().cpu()
 
         rows: List[Dict[str, Any]] = []
-        for node_type, node_slice in (
-            ("user", slice(0, self.n_users)),
-            ("item", slice(self.n_users, None)),
+        for node_type, k_bar_sample, sample_idx in (
+            ("user", k_bar_user, self.kbar_sample_user_idx),
+            ("item", k_bar_item, self.kbar_sample_item_idx),
         ):
-            k_bar_t = k_bar[node_slice].cpu()
-            degree_t = degree[node_slice].cpu()
-
-            stats = self._kbar_stats(k_bar_t)
-            corr, pvalue = spearmanr(k_bar_t.numpy(), degree_t.numpy())
-            stats["spearman_corr_with_degree"] = float(corr)
-            stats["spearman_pvalue"] = float(pvalue)
+            stats = self._kbar_stats(k_bar_sample)
+            fractions = self._kbar_threshold_fractions(k_bar_sample)
+            degree_sample = degree[sample_idx.cpu()]
+            corr, _ = spearmanr(k_bar_sample.numpy(), degree_sample.numpy())
 
             logger.attention(
-                f"HALTGRAND k_bar diagnostics [{node_type}, epoch {epoch}]: "
-                f"mean={stats['mean']:.4f} std={stats['std']:.4f} "
-                f"min={stats['min']:.4f} max={stats['max']:.4f} "
-                f"p10={stats['p10']:.4f} p50={stats['p50']:.4f} "
-                f"p90={stats['p90']:.4f} "
-                f"spearman(k_bar, degree)={stats['spearman_corr_with_degree']:.4f} "
-                f"(p={stats['spearman_pvalue']:.3g})"
+                f"[k_bar @ epoch {epoch}, {node_type}] mean={stats['mean']:.4f} "
+                f"std={stats['std']:.4f} min={stats['min']:.4f} "
+                f"max={stats['max']:.4f} p10={stats['p10']:.4f} "
+                f"p25={stats['p25']:.4f} p50={stats['p50']:.4f} "
+                f"p75={stats['p75']:.4f} p90={stats['p90']:.4f} "
+                f"p95={stats['p95']:.4f} p99={stats['p99']:.4f} "
+                f"spearman(k_bar,degree)={corr:.4f}"
             )
-            rows.append({"epoch": epoch, "node_type": node_type, **stats})
+            logger.attention(
+                f"[k_bar @ epoch {epoch}, {node_type}] fractions: "
+                f"stopped(<0.01)={fractions['frac_stopped']:.4f} "
+                f"quasi(0.01-0.1)={fractions['frac_quasi']:.4f} "
+                f"low(0.1-0.5)={fractions['frac_low']:.4f} "
+                f"med(0.5-1.5)={fractions['frac_med']:.4f} "
+                f"high(1.5-3)={fractions['frac_high']:.4f} "
+                f"vhigh(>=3)={fractions['frac_vhigh']:.4f}"
+            )
+            if show_histogram:
+                logger.attention(f"{node_type} k_bar hist (epoch {epoch}):")
+                for line in self._kbar_text_histogram(k_bar_sample, self.n_layers):
+                    logger.attention(f"  {line}")
 
+            rows.append(
+                {
+                    "epoch": epoch,
+                    "type": node_type,
+                    **stats,
+                    **fractions,
+                    "spearman_deg": float(corr),
+                    "alpha": alpha,
+                    "loss_total": loss_total,
+                    "loss_bpr": loss_bpr,
+                    "loss_ponder": loss_ponder,
+                    "loss_unif": loss_unif,
+                    "val_ndcg": val_ndcg if val_ndcg is not None else "",
+                }
+            )
+
+        logger.attention(
+            f"[k_bar @ epoch {epoch}] alpha={alpha:.4f} loss_total={loss_total:.4f} "
+            f"loss_bpr={loss_bpr:.4f} loss_ponder={loss_ponder:.4f} "
+            f"loss_unif={loss_unif:.4f} "
+            f"val_ndcg={'n/a' if val_ndcg is None else f'{val_ndcg:.4f}'}"
+        )
         self._append_kbar_csv(rows)
 
     def _is_rank_zero(self) -> bool:
@@ -903,6 +1136,14 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
             return self.trainer.is_global_zero
         except RuntimeError:
             return True
+
+    def on_train_epoch_start(self) -> None:
+        """Lightning hook: reset the per-epoch loss accumulators used by the
+        k_bar diagnostic (see ``_log_kbar_diagnostics``). Bookkeeping only;
+        does not affect training.
+        """
+        self._epoch_loss_sums = {"total": 0.0, "bpr": 0.0, "ponder": 0.0, "unif": 0.0}
+        self._epoch_batch_count = 0
 
     def on_train_epoch_end(self) -> None:
         """Lightning hook: log the read-only k_bar diagnostic every
