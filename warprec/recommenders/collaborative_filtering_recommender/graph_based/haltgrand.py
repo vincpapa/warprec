@@ -1,8 +1,11 @@
-# pylint: disable = R0801, E1102, R0902, R0914, W0201
+# pylint: disable = R0801, E1102, R0902, R0914, W0201, C0302
 # W0201 (attribute-defined-outside-init): the one-time graph precompute is
 # factored into `_precompute_graph_signals` (called from `__init__`), not
 # inlined into `__init__`'s own body, for readability and testability; pylint
 # doesn't trace attribute assignments through called helper methods.
+# C0302 (too-many-lines): the model, its k_bar and dE diagnostics, and their
+# docstrings are all kept in this one file rather than split arbitrarily
+# across files for a single model class.
 import csv
 import math
 import os
@@ -915,3 +918,170 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         if not self._is_rank_zero():
             return
         self._log_kbar_diagnostics(self.current_epoch + 1)
+
+    # ------------------------------------------------------------------ #
+    # One-time exploitability-increment (dE) diagnostic. E_hat is graph-only
+    # and frozen right after precompute, so this never needs to run more than
+    # once and is never wired into the training loop -- call it explicitly
+    # (e.g. right after construction) whenever needed. Read-only: no_grad,
+    # touches only the frozen e_hat/degree buffers, never affects training.
+    # This model does not implement the optional isotonic projection
+    # mentioned in the method text, so `self.e_hat` is always the raw
+    # (unprojected) signal -- there is no separate projected version to
+    # report here.
+    # ------------------------------------------------------------------ #
+    _DELTA_E_CSV_FIELDNAMES = ["node_id", "type", "degree", "k", "E", "dE"]
+    _DELTA_E_PERCENTILES = (0, 10, 50, 90, 100)
+
+    def _representative_node_local_indices(self, degree_of_type: Tensor) -> List[int]:
+        """Pick one node per requested degree percentile (nearest-rank method),
+        deduplicated while preserving order.
+
+        Args:
+            degree_of_type (Tensor): The (n_type_nodes,) degree of every node
+                of one type.
+
+        Returns:
+            List[int]: The local (within-type) indices of the selected nodes.
+        """
+        order = torch.argsort(degree_of_type)
+        n = degree_of_type.numel()
+        picked = []
+        seen = set()
+        for percentile in self._DELTA_E_PERCENTILES:
+            pos = min(int(round(percentile / 100.0 * (n - 1))), n - 1)
+            local_idx = int(order[pos].item())
+            if local_idx not in seen:
+                seen.add(local_idx)
+                picked.append(local_idx)
+        return picked
+
+    def _write_delta_e_csv(self, csv_path: str, rows: List[Dict[str, Any]]) -> None:
+        """Best-effort CSV write of the full per-(node, k) dE diagnostic data.
+        Never raises: a write failure is logged and otherwise swallowed.
+
+        Args:
+            csv_path (str): The destination CSV path (overwritten if it
+                already exists, since this is a one-shot diagnostic, not an
+                append-per-epoch log like the k_bar CSV).
+            rows (List[Dict[str, Any]]): One dict per (node, k) pair, with
+                keys matching ``_DELTA_E_CSV_FIELDNAMES``.
+        """
+        try:
+            with open(csv_path, "w", newline="", encoding="utf-8") as csv_file:
+                writer = csv.DictWriter(
+                    csv_file, fieldnames=self._DELTA_E_CSV_FIELDNAMES
+                )
+                writer.writeheader()
+                writer.writerows(rows)
+            logger.attention(
+                f"[dE diagnostics] wrote {len(rows)} rows to "
+                f"{os.path.abspath(csv_path)}"
+            )
+        except OSError as error:
+            logger.attention(f"[dE diagnostics] could not write CSV: {error}")
+
+    def diagnose_delta_e(
+        self, csv_path: Optional[str] = "deltaE_diagnostics.csv"
+    ) -> None:
+        """One-time diagnostic of the exploitability increments
+        ``dE[v,k] = E_hat[v,k+1] - E_hat[v,k]``, which enter the controller's
+        marginal utility ``m[v,k] = dE[v,k] + gamma*dS[v,k] - lambda0``. With
+        gamma=0 (the specificity-ablation setting), dE is the only thing that
+        can differentiate nodes, so this inspects its scale and cross-node
+        variability directly: representative nodes at degree percentiles
+        {0, 10, 50, 90, 100} per type, aggregate dE statistics per type and
+        per k, the scale of dE[:,0] (the value to compare against lambda0),
+        and the Spearman correlation between dE[:,0] and degree.
+
+        Read-only: runs under ``torch.no_grad()``, only reads the frozen
+        ``e_hat``/``degree`` buffers, and never affects training.
+
+        Args:
+            csv_path (Optional[str]): Where to write the full per-(node, k)
+                CSV (columns: node_id, type, degree, k, E, dE). If None, the
+                CSV is skipped and only the log output is produced.
+        """
+        with torch.no_grad():
+            e_hat = self.e_hat.detach().cpu()
+        d_e = e_hat[:, 1:] - e_hat[:, :-1]
+        degree = self.degree.detach().cpu()
+        n_layers = self.n_layers
+
+        logger.attention(
+            f"[dE diagnostics] E_hat and dE for representative nodes (K={n_layers})"
+        )
+        header_e = "  ".join(f"E{k}" for k in range(n_layers + 1))
+        header_de = "  ".join(f"dE{k}" for k in range(n_layers))
+        logger.attention(f"type   node     deg    {header_e}    {header_de}")
+
+        csv_rows: List[Dict[str, Any]] = []
+        types = (
+            ("user", slice(0, self.n_users), 0, self.n_users),
+            ("item", slice(self.n_users, None), self.n_users, self.n_items),
+        )
+
+        for node_type, node_slice, offset, n_type_nodes in types:
+            degree_t = degree[node_slice]
+            e_t = e_hat[node_slice]
+            d_e_t = d_e[node_slice]
+
+            for local_idx in self._representative_node_local_indices(degree_t):
+                global_idx = offset + local_idx
+                node_deg = int(degree_t[local_idx].item())
+                e_row = e_t[local_idx]
+                de_row = d_e_t[local_idx]
+
+                e_str = "  ".join(f"{v:.4e}" for v in e_row.tolist())
+                de_str = "  ".join(f"{v:.4e}" for v in de_row.tolist())
+                logger.attention(
+                    f"{node_type:5s}  {global_idx:6d}  {node_deg:5d}   "
+                    f"{e_str}   {de_str}"
+                )
+
+            for local_idx in range(n_type_nodes):
+                global_idx = offset + local_idx
+                node_deg = int(degree_t[local_idx].item())
+                for k in range(n_layers + 1):
+                    csv_rows.append(
+                        {
+                            "node_id": global_idx,
+                            "type": node_type,
+                            "degree": node_deg,
+                            "k": k,
+                            "E": e_t[local_idx, k].item(),
+                            "dE": (d_e_t[local_idx, k].item() if k < n_layers else ""),
+                        }
+                    )
+
+        for node_type, node_slice, _offset, _n_type_nodes in types:
+            degree_t = degree[node_slice]
+            d_e_t = d_e[node_slice]
+
+            logger.attention(
+                f"[dE diagnostics] dE[:,k] stats over all {node_type.upper()} nodes:"
+            )
+            for k in range(n_layers):
+                stats = self._kbar_stats(d_e_t[:, k])
+                logger.attention(
+                    f"  k={k}: mean={stats['mean']:.4e} std={stats['std']:.4e} "
+                    f"min={stats['min']:.4e} max={stats['max']:.4e} "
+                    f"p10={stats['p10']:.4e} p50={stats['p50']:.4e} "
+                    f"p90={stats['p90']:.4e}"
+                )
+
+            first = d_e_t[:, 0]
+            logger.attention(
+                f"[dE diagnostics] scale of dE[:,0] (compare with lambda0): "
+                f"{node_type} mean={first.mean().item():.4e} "
+                f"range=[{first.min().item():.4e}, {first.max().item():.4e}]"
+            )
+
+            corr, pvalue = spearmanr(first.numpy(), degree_t.numpy())
+            logger.attention(
+                f"[dE diagnostics] spearman(dE[:,0], degree) [{node_type}]: "
+                f"corr={corr:.4f} (p={pvalue:.3g})"
+            )
+
+        if csv_path is not None:
+            self._write_delta_e_csv(csv_path, csv_rows)
