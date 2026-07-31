@@ -1,0 +1,211 @@
+nohup: ignoring input
+/opt/miniconda3/envs/warprec/lib/python3.12/site-packages/hyperopt/atpe.py:19: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+30-07-2026 08:59:22 - WarpRec - 📝 [37mStarting experiment.[0m
+30-07-2026 08:59:22 - WarpRec - 📝 [37mReading train configuration file in: config/haltgrand_design.yml[0m
+30-07-2026 08:59:22 - WarpRec - 📝 [37mReading process completed correctly.[0m
+2026-07-30 08:59:22,557	WARNING services.py:397 -- Found multiple active Ray instances: {'10.74.0.72:6379', 'herd-ray-head:6379'}. Connecting to latest cluster at 10.74.0.72:6379. You can override this by setting the `--address` flag or `RAY_ADDRESS` environment variable.
+2026-07-30 08:59:22,557	INFO worker.py:1833 -- Connecting to existing Ray cluster at address: 10.74.0.72:6379...
+2026-07-30 08:59:22,569	INFO worker.py:2013 -- Connected to Ray cluster.
+/opt/miniconda3/envs/warprec/lib/python3.12/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+30-07-2026 08:59:22 - WarpRec - ✅ [32mConnected to existing Ray cluster.[0m
+30-07-2026 08:59:22 - WarpRec - 📝 [37mSetting up experiment local folder.[0m
+30-07-2026 08:59:22 - WarpRec - 📝 [37mExperiment folder created successfully.[0m
+30-07-2026 08:59:22 - WarpRec - 📝 [37mDelegating data preparation to Ray cluster[0m
+[36m(pid=774732)[0m /opt/miniconda3/envs/warprec/lib/python3.12/site-packages/hyperopt/atpe.py:19: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+[36m(pid=774732)[0m   import pkg_resources
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📝 [37mApplying filters to the dataset. Initial dataset size: 2200761 rows.[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📊 [36mAfter filter 1/1 (IterativeKCore): 755416 rows[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - ✅ [32mFiltering process completed. Final dataset size after filtering: 755416. Total filtering time: 0.30 seconds.[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📝 [37mStarting test splitting process with random_holdout splitting strategy.[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📝 [37mTest splitting completed in : 0.05s[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - ✅ [32mSplitting process over in 0.05s.[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📝 [37mCreating main dataset[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📝 [37m---------------------------------Train set----------------------------------[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📊 [36mNumber of users: 36456      Number of items: 27943      Transactions: 679874[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📝 [37m----------------------------------------------------------------------------[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📝 [37m----------------------------------Test set---------------------------------[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📊 [36mNumber of users: 31018      Number of items: 23409      Transactions: 75542[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:34 - WarpRec - 📝 [37m---------------------------------------------------------------------------[0m
+[36m(remote_data_preparation pid=774732)[0m 30-07-2026 08:59:35 - WarpRec - 📝 [37mPreparing main dataset inner structures for evaluation.[0m
+30-07-2026 08:59:35 - WarpRec - 📝 [37mTabular split data written to experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/split[0m
+30-07-2026 08:59:35 - WarpRec - ✅ [32mData preparation completed in 13.05 seconds.[0m
+30-07-2026 08:59:35 - WarpRec - 📢 [33mValidation metric for this experiment has been set to: nDCG@10[0m
+[36m(pid=775230)[0m /opt/miniconda3/envs/warprec/lib/python3.12/site-packages/hyperopt/atpe.py:19: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+[36m(pid=775230)[0m   import pkg_resources
+[36m(TrainController pid=775598)[0m /opt/miniconda3/envs/warprec/lib/python3.12/site-packages/hyperopt/atpe.py:19: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+[36m(TrainController pid=775598)[0m   import pkg_resources
+[36m(TrainController pid=775598)[0m Attempting to start training worker group of size 1 with the following resources: [{'CPU': 1.0, 'GPU': 1}] * 1
+╭────────────────────────────────────────────────────────────────────────╮
+│ Configuration for experiment     train_driver_fn_2026-07-30_08-59-35   │
+├────────────────────────────────────────────────────────────────────────┤
+│ Search algorithm                 BasicVariantGenerator                 │
+│ Scheduler                        FIFOSchedulerWrapper                  │
+│ Number of trials                 1                                     │
+╰────────────────────────────────────────────────────────────────────────╯
+
+View detailed results here: /home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/train_driver_fn_2026-07-30_08-59-35
+To visualize your results with TensorBoard, run: `tensorboard --logdir /tmp/ray/session_2026-07-30_08-57-47_027174_771826/artifacts/2026-07-30_08-59-35/train_driver_fn_2026-07-30_08-59-35/driver_artifacts`
+
+Trial status: 1 PENDING
+Current time: 2026-07-30 08:59:35. Total running time: 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   PENDING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+Trial HALTGRAND_GiftedHolisticReindeer started with configuration:
+╭──────────────────────────────────────────────────────────╮
+│ Trial HALTGRAND_GiftedHolisticReindeer config            │
+├──────────────────────────────────────────────────────────┤
+│ alpha_init                                             0 │
+│ batch_size                                          2048 │
+│ diffusion_step                                         0 │
+│ embedding_size                                        64 │
+│ epochs                                               300 │
+│ gamma                                                  1 │
+│ lambda0                                             0.05 │
+│ lambda_ponder                                       0.01 │
+│ lambda_unif                                          0.1 │
+│ learning_rate                                      0.001 │
+│ n_anchors                                             32 │
+│ n_layers                                               4 │
+│ n_probes                                              20 │
+│ reg_weight                                        0.0001 │
+│ temperature                                          0.2 │
+╰──────────────────────────────────────────────────────────╯
+
+Trial status: 1 RUNNING
+Current time: 2026-07-30 09:00:05. Total running time: 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   RUNNING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=775931)[0m /opt/miniconda3/envs/warprec/lib/python3.12/site-packages/hyperopt/atpe.py:19: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+[36m(RayTrainWorker pid=775931)[0m   import pkg_resources
+[36m(RayTrainWorker pid=775931)[0m Setting up process group for: env:// [rank=0, world_size=1]
+[36m(TrainController pid=775598)[0m Started training worker group of size 1: 
+[36m(TrainController pid=775598)[0m - (ip=10.74.0.72, pid=775931) world_rank=0, local_rank=0, node_rank=0
+[36m(RayTrainWorker pid=775931)[0m [rank0]:[W730 09:00:55.151695366 ProcessGroupNCCL.cpp:4715] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 as device used by this process is currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. You can pecify device_id in init_process_group() to force use of a particular device.
+[36m(RayTrainWorker pid=775931)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-00-56.579825)
+[36m(RayTrainWorker pid=775931)[0m Reporting training result 1: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-00-56.579825), metrics={'nDCG@10': 0.016740141436457634, 'Recall@10': 0.02270704135298729, 'EPC@10': 0.007332186680287123, 'Gini@10': 0.9928556084632874, 'best_nDCG@10': 0.016740141436457634, 'loss': 0.32617413997650146, 'ram_peak_mb': 3761.4453125, 'vram_peak_mb': 1092.75244140625, 'epoch': 0, 'step': 332}, validation_spec=None)
+[36m(RayTrainWorker pid=775931)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-01-33.727978)
+[36m(RayTrainWorker pid=775931)[0m Reporting training result 2: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-01-33.727978), metrics={'nDCG@10': 0.04160509258508682, 'Recall@10': 0.05548808351159096, 'EPC@10': 0.01812802068889141, 'Gini@10': 0.9859386682510376, 'best_nDCG@10': 0.04160509258508682, 'loss': 0.31154385209083557, 'ram_peak_mb': 3925.578125, 'vram_peak_mb': 1119.01416015625, 'epoch': 1, 'step': 664}, validation_spec=None)
+
+[36m(RayTrainWorker pid=775931)[0m 30-07-2026 09:00:16 - WarpRec - 📢 [33mHALTGRAND: rho=1.070683, h=0.466992, ||B_delta phi0 - rho phi0||=3.884e-05[0m
+Trial status: 1 RUNNING
+Current time: 2026-07-30 09:00:35. Total running time: 1min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   RUNNING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-07-30 09:01:06. Total running time: 1min 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: fcebb_00000 with nDCG@10=0.016740141436457634 and params={'embedding_size': 64, 'n_layers': 4, 'diffusion_step': 0.0, 'n_probes': 20, 'n_anchors': 32, 'temperature': 0.2, 'gamma': 1.0, 'lambda0': 0.05, 'lambda_ponder': 0.01, 'lambda_unif': 0.1, 'reg_weight': 0.0001, 'alpha_init': 0.0, 'batch_size': 2048, 'epochs': 300, 'learning_rate': 0.001}
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10       EPC@10     Gini@10 │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   RUNNING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001        1            71.0592   0.0167401      0.022707   0.00733219    0.992856 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-07-30 09:01:36. Total running time: 2min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: fcebb_00000 with nDCG@10=0.04160509258508682 and params={'embedding_size': 64, 'n_layers': 4, 'diffusion_step': 0.0, 'n_probes': 20, 'n_anchors': 32, 'temperature': 0.2, 'gamma': 1.0, 'lambda0': 0.05, 'lambda_ponder': 0.01, 'lambda_unif': 0.1, 'reg_weight': 0.0001, 'alpha_init': 0.0, 'batch_size': 2048, 'epochs': 300, 'learning_rate': 0.001}
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10     EPC@10     Gini@10 │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   RUNNING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001        2            107.343   0.0416051     0.0554881   0.018128    0.985939 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-07-30 09:02:06. Total running time: 2min 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: fcebb_00000 with nDCG@10=0.04160509258508682 and params={'embedding_size': 64, 'n_layers': 4, 'diffusion_step': 0.0, 'n_probes': 20, 'n_anchors': 32, 'temperature': 0.2, 'gamma': 1.0, 'lambda0': 0.05, 'lambda_ponder': 0.01, 'lambda_unif': 0.1, 'reg_weight': 0.0001, 'alpha_init': 0.0, 'batch_size': 2048, 'epochs': 300, 'learning_rate': 0.001}
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10     EPC@10     Gini@10 │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   RUNNING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001        2            107.343   0.0416051     0.0554881   0.018128    0.985939 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=775931)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-02-10.354892)
+[36m(RayTrainWorker pid=775931)[0m Reporting training result 3: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-02-10.354892), metrics={'nDCG@10': 0.06547811627388, 'Recall@10': 0.08813764899969101, 'EPC@10': 0.02806839346885681, 'Gini@10': 0.9766306281089783, 'best_nDCG@10': 0.06547811627388, 'loss': 0.23385773599147797, 'ram_peak_mb': 3927.19921875, 'vram_peak_mb': 1121.5146484375, 'epoch': 2, 'step': 996}, validation_spec=None)
+[36m(RayTrainWorker pid=775931)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-02-46.730128)
+[36m(RayTrainWorker pid=775931)[0m Reporting training result 4: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-02-46.730128), metrics={'nDCG@10': 0.0782044306397438, 'Recall@10': 0.10598558932542801, 'EPC@10': 0.03337232768535614, 'Gini@10': 0.9711836576461792, 'best_nDCG@10': 0.0782044306397438, 'loss': 0.07415074855089188, 'ram_peak_mb': 4055.41796875, 'vram_peak_mb': 1121.5146484375, 'epoch': 3, 'step': 1328}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-07-30 09:02:36. Total running time: 3min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: fcebb_00000 with nDCG@10=0.06547811627388 and params={'embedding_size': 64, 'n_layers': 4, 'diffusion_step': 0.0, 'n_probes': 20, 'n_anchors': 32, 'temperature': 0.2, 'gamma': 1.0, 'lambda0': 0.05, 'lambda_ponder': 0.01, 'lambda_unif': 0.1, 'reg_weight': 0.0001, 'alpha_init': 0.0, 'batch_size': 2048, 'epochs': 300, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   RUNNING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001        3            145.366   0.0654781     0.0881376   0.0280684    0.976631 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-07-30 09:03:06. Total running time: 3min 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: fcebb_00000 with nDCG@10=0.0782044306397438 and params={'embedding_size': 64, 'n_layers': 4, 'diffusion_step': 0.0, 'n_probes': 20, 'n_anchors': 32, 'temperature': 0.2, 'gamma': 1.0, 'lambda0': 0.05, 'lambda_ponder': 0.01, 'lambda_unif': 0.1, 'reg_weight': 0.0001, 'alpha_init': 0.0, 'batch_size': 2048, 'epochs': 300, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   RUNNING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001        4            181.635   0.0782044      0.105986   0.0333723    0.971184 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=775931)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-03-23.365920)
+[36m(RayTrainWorker pid=775931)[0m Reporting training result 5: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-03-23.365920), metrics={'nDCG@10': 0.08573547005653381, 'Recall@10': 0.1168181449174881, 'EPC@10': 0.03639641031622887, 'Gini@10': 0.9666895866394043, 'best_nDCG@10': 0.08573547005653381, 'loss': -0.058950960636138916, 'ram_peak_mb': 4056.59765625, 'vram_peak_mb': 1121.5146484375, 'epoch': 4, 'step': 1660}, validation_spec=None)
+[36m(RayTrainWorker pid=775931)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-03-59.958682)
+[36m(RayTrainWorker pid=775931)[0m Reporting training result 6: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-03-59.958682), metrics={'nDCG@10': 0.09050270169973373, 'Recall@10': 0.12397807091474533, 'EPC@10': 0.03833561763167381, 'Gini@10': 0.9623866677284241, 'best_nDCG@10': 0.09050270169973373, 'loss': -0.14434409141540527, 'ram_peak_mb': 4057.71875, 'vram_peak_mb': 1130.5439453125, 'epoch': 5, 'step': 1992}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-07-30 09:03:36. Total running time: 4min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: fcebb_00000 with nDCG@10=0.08573547005653381 and params={'embedding_size': 64, 'n_layers': 4, 'diffusion_step': 0.0, 'n_probes': 20, 'n_anchors': 32, 'temperature': 0.2, 'gamma': 1.0, 'lambda0': 0.05, 'lambda_ponder': 0.01, 'lambda_unif': 0.1, 'reg_weight': 0.0001, 'alpha_init': 0.0, 'batch_size': 2048, 'epochs': 300, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   RUNNING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001        5            217.887   0.0857355      0.116818   0.0363964     0.96669 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-07-30 09:04:06. Total running time: 4min 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: fcebb_00000 with nDCG@10=0.09050270169973373 and params={'embedding_size': 64, 'n_layers': 4, 'diffusion_step': 0.0, 'n_probes': 20, 'n_anchors': 32, 'temperature': 0.2, 'gamma': 1.0, 'lambda0': 0.05, 'lambda_ponder': 0.01, 'lambda_unif': 0.1, 'reg_weight': 0.0001, 'alpha_init': 0.0, 'batch_size': 2048, 'epochs': 300, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   RUNNING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001        6            254.144   0.0905027      0.123978   0.0383356    0.962387 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=775931)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-04-36.880812)
+[36m(RayTrainWorker pid=775931)[0m Reporting training result 7: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/haltgrand/lastfm_emotion_gemini/lastfm_emotion_gemini/ray_results/ray_train_trial_id=fcebb_00000/checkpoint_2026-07-30_09-04-36.880812), metrics={'nDCG@10': 0.0944165289402008, 'Recall@10': 0.12986105680465698, 'EPC@10': 0.03988267853856087, 'Gini@10': 0.9579126834869385, 'best_nDCG@10': 0.0944165289402008, 'loss': -0.1997590959072113, 'ram_peak_mb': 4058.78515625, 'vram_peak_mb': 1130.5439453125, 'epoch': 6, 'step': 2324}, validation_spec=None)
+*** SIGTERM received at time=1785402302 on cpu 6 ***
+PC: @     0x7d8a00c98e51  (unknown)  (unknown)
+    @     0x7d8a00c45330  1729968432  (unknown)
+    @     0x7d8a00c9bd6e        224  pthread_cond_timedwait
+    @     0x7d890ad0838f       1184  ray::core::GetRequest::Wait()
+    @     0x7d890ad0aadf       1408  ray::core::CoreWorkerMemoryStore::GetImpl()
+    @     0x7d890ad0bffb       1360  ray::core::CoreWorkerMemoryStore::Wait()
+    @     0x7d890abbe5dd       1776  ray::core::CoreWorker::Wait()
+    @     0x7d890aaec4d0        352  __pyx_pw_3ray_7_raylet_10CoreWorker_59wait()
+    @     0x57ecaff84dde  (unknown)  PyObject_Vectorcall
+    @ ... and at least 6 more frames
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474: *** SIGTERM received at time=1785402302 on cpu 6 ***
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474: PC: @     0x7d8a00c98e51  (unknown)  (unknown)
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474:     @     0x7d8a00c45330  1729968432  (unknown)
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474:     @     0x7d8a00c9bd6e        224  pthread_cond_timedwait
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474:     @     0x7d890ad0838f       1184  ray::core::GetRequest::Wait()
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474:     @     0x7d890ad0aadf       1408  ray::core::CoreWorkerMemoryStore::GetImpl()
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474:     @     0x7d890ad0bffb       1360  ray::core::CoreWorkerMemoryStore::Wait()
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474:     @     0x7d890abbe5dd       1776  ray::core::CoreWorker::Wait()
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474:     @     0x7d890aaec4d0        352  __pyx_pw_3ray_7_raylet_10CoreWorker_59wait()
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474:     @     0x57ecaff84dde  (unknown)  PyObject_Vectorcall
+[2026-07-30 09:05:02,580 E 774343 774343] logging.cc:474:     @ ... and at least 6 more frames
+
+Trial status: 1 RUNNING
+Current time: 2026-07-30 09:04:36. Total running time: 5min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: fcebb_00000 with nDCG@10=0.09050270169973373 and params={'embedding_size': 64, 'n_layers': 4, 'diffusion_step': 0.0, 'n_probes': 20, 'n_anchors': 32, 'temperature': 0.2, 'gamma': 1.0, 'lambda0': 0.05, 'lambda_ponder': 0.01, 'lambda_unif': 0.1, 'reg_weight': 0.0001, 'alpha_init': 0.0, 'batch_size': 2048, 'epochs': 300, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                         status       embedding_size     n_layers     diffusion_step     n_probes     n_anchors     temperature     gamma     lambda0     lambda_ponder     lambda_unif     reg_weight     alpha_init     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ HALTGRAND_GiftedHolisticReindeer   RUNNING                  64            4                  0           20            32             0.2         1        0.05              0.01             0.1         0.0001              0           2048        300             0.001        6            254.144   0.0905027      0.123978   0.0383356    0.962387 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯

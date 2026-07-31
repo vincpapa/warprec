@@ -1,0 +1,82 @@
+reader:
+  loading_strategy: dataset
+  data_type: transaction
+  reading_method: local
+  local_path: datasets/lastfm_emotion_gemini/lastfm_emotion_gemini.inter
+  rating_type: implicit
+  sep: '\t'
+  labels:
+    user_id_label: user_id:token
+    item_id_label: track_id:token
+    rating_label: rating:float
+    timestamp_label: timestamp:float
+  dtypes:
+    user_id_type: int64
+    item_id_type: int64
+    rating_type: float32
+    timestamp_type: float64
+writer:
+  dataset_name: lastfm_emotion_gemini
+  writing_method: local
+  local_experiment_path: experiment/haltgrand/lastfm_emotion_gemini
+  save_split: True
+filtering:
+  # HALT-GRAND's diffusion operator now uses a regularized excess-degree
+  # normalization (Dtilde = clamp(nu - 1 + eps_delta, min=eps_delta)), well
+  # defined for every node degree nu >= 0 -- k-core filtering is no longer a
+  # hard requirement of the model (degree-0/1 nodes, which routinely appear in
+  # the training split even after a k-core filter on the full dataset, are
+  # handled automatically: a degree-0 node just doesn't aggregate from
+  # neighbors). IterativeKCore is still reasonable general-purpose data hygiene
+  # (drops very low-activity users/items before training), not a correctness
+  # requirement for HALTGRAND specifically.
+  IterativeKCore:
+    min_interactions: 10
+splitter:
+  test_splitting:
+    strategy: random_holdout
+    ratio: 0.1
+models:
+  # Models used in the design pipeline are expected to have one value per
+  # hyperparameter (no search space).
+  HALTGRAND:
+    optimization:
+      strategy: grid
+      device: cuda
+      parallel_trials: 1
+      checkpoint_to_keep: 1
+    early_stopping:
+      monitor: score
+      patience: 20
+      grace_period: 20
+    embedding_size: 64
+    n_layers: [2, 4, 6, 8]
+    diffusion_step: 0.0        # 0 => auto h = 1/(2*rho), the stable Euler step
+    eps_delta: 0.5             # regularized excess-degree constant, in (0, 1]
+    n_probes: 20               # P, Rademacher probes for the E_hat estimator
+    n_anchors: 32              # R, degree-stratified anchors per node type
+    temperature: 0.2           # theta
+    gamma: [0.0, 0.5, 1.0, 2.0]
+    lambda0: [0.01, 0.02, 0.05, 0.1, 0.2]
+    lambda_ponder: 0.01
+    lambda_unif: 0.1
+    reg_weight: 0.0001
+    alpha_init: 0.0
+    batch_size: 4096
+    epochs: 300
+    learning_rate: 0.001
+evaluation:
+  # top_k: [10, 20]
+  # metrics: [nDCG, Precision, Recall, HitRate]
+  # strategy: full
+  full_evaluation_on_report: True
+  validation_metric: nDCG@10
+  top_k: [10]
+  metrics: [nDCG, Recall, EPC, Gini]
+  strategy: full
+  batch_size: 1024
+  seed: 42
+general:
+  device: cuda
+  cuda_visible_devices: [0]
+  time_report: False

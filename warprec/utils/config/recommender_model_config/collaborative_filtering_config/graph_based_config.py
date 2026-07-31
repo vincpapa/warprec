@@ -366,6 +366,165 @@ class GCMC(RecomModel):
         return validate_greater_than_zero(cls, v, "learning_rate")
 
 
+@params_registry.register("HALTGRAND")
+class HALTGRAND(RecomModel):
+    """Definition of the model HALTGRAND.
+
+    Attributes:
+        embedding_size (INT_FIELD): List of values for embedding_size.
+        n_layers (INT_FIELD): List of values for the max propagation depth (K).
+        diffusion_step (FLOAT_FIELD): List of values for the Euler step h. Use 0 to
+            let the model derive the stable step 1/(2*rho) automatically; a
+            strictly positive value must satisfy h <= 1/(2*rho).
+        eps_delta (FLOAT_FIELD): List of values for the excess-degree
+            regularization constant, in (0, 1]. This is an explored
+            hyperparameter (not a fixed value): it changes rho, and therefore
+            the stability bound on diffusion_step, so both are always
+            recomputed together for each eps_delta.
+        n_probes (INT_FIELD): List of values for the number of Rademacher probes (P).
+        n_anchors (INT_FIELD): List of values for the number of degree-stratified
+            anchors per node type (R). Must be >= 2.
+        temperature (FLOAT_FIELD): List of values for the specificity softmax
+            temperature (theta).
+        gamma (FLOAT_FIELD): List of values for the specificity weight in the
+            survival controller. 0 disables specificity's contribution
+            (a valid ablation setting); negative values are rejected.
+        lambda0 (FLOAT_FIELD): List of values for the fixed per-layer price in the
+            survival controller.
+        lambda_ponder (FLOAT_FIELD): List of values for the ponder loss weight.
+        lambda_unif (FLOAT_FIELD): List of values for the uniformity loss weight.
+        reg_weight (FLOAT_FIELD): List of values for reg_weight.
+        alpha_init (FLOAT_FIELD): List of values for the initial pre-softplus alpha.
+        batch_size (INT_FIELD): List of values for batch_size.
+        epochs (INT_FIELD): List of values for epochs.
+        learning_rate (FLOAT_FIELD): List of values for learning rate.
+    """
+
+    embedding_size: INT_FIELD
+    n_layers: INT_FIELD
+    diffusion_step: FLOAT_FIELD
+    eps_delta: FLOAT_FIELD
+    n_probes: INT_FIELD
+    n_anchors: INT_FIELD
+    temperature: FLOAT_FIELD
+    gamma: FLOAT_FIELD
+    lambda0: FLOAT_FIELD
+    lambda_ponder: FLOAT_FIELD
+    lambda_unif: FLOAT_FIELD
+    reg_weight: FLOAT_FIELD
+    alpha_init: FLOAT_FIELD
+    batch_size: INT_FIELD
+    epochs: INT_FIELD
+    learning_rate: FLOAT_FIELD
+
+    @field_validator("embedding_size")
+    @classmethod
+    def check_embedding_size(cls, v: list):
+        """Validate embedding_size."""
+        return validate_greater_than_zero(cls, v, "embedding_size")
+
+    @field_validator("n_layers")
+    @classmethod
+    def check_n_layers(cls, v: list):
+        """Validate n_layers."""
+        return validate_greater_than_zero(cls, v, "n_layers")
+
+    @field_validator("diffusion_step")
+    @classmethod
+    def check_diffusion_step(cls, v: list):
+        """Validate diffusion_step (0 means 'auto')."""
+        return validate_greater_equal_than_zero(cls, v, "diffusion_step")
+
+    @field_validator("eps_delta")
+    @classmethod
+    def check_eps_delta(cls, v: list):
+        """Validate eps_delta (must be strictly positive; the meaningful range
+        is (0, 1], with 1 collapsing to the standard symmetric normalization)."""
+        return validate_greater_than_zero(cls, v, "eps_delta")
+
+    @field_validator("n_probes")
+    @classmethod
+    def check_n_probes(cls, v: list):
+        """Validate n_probes."""
+        return validate_greater_than_zero(cls, v, "n_probes")
+
+    @field_validator("n_anchors")
+    @classmethod
+    def check_n_anchors(cls, v: list):
+        """Validate n_anchors (must be >= 2 to compute a softmax entropy)."""
+        v = validate_greater_than_zero(cls, v, "n_anchors")
+        for value in v:
+            if isinstance(value, (int, float)) and value < 2:
+                raise ValueError(
+                    f"Values of n_anchors for {cls.__name__} model must be >= 2. "
+                    f"Values received as input: {v}"
+                )
+        return v
+
+    @field_validator("temperature")
+    @classmethod
+    def check_temperature(cls, v: list):
+        """Validate temperature."""
+        return validate_greater_than_zero(cls, v, "temperature")
+
+    @field_validator("gamma")
+    @classmethod
+    def check_gamma(cls, v: list):
+        """Validate gamma. Allows 0 (an ablation disabling the specificity
+        term's contribution to the controller's marginal utility, m = dE +
+        gamma*dS - lambda0), but rejects negative values, which would invert
+        the intended sign of the specificity term rather than ablate it."""
+        return validate_greater_equal_than_zero(cls, v, "gamma")
+
+    @field_validator("lambda0")
+    @classmethod
+    def check_lambda0(cls, v: list):
+        """Validate lambda0."""
+        return validate_greater_than_zero(cls, v, "lambda0")
+
+    @field_validator("lambda_ponder")
+    @classmethod
+    def check_lambda_ponder(cls, v: list):
+        """Validate lambda_ponder."""
+        return validate_greater_equal_than_zero(cls, v, "lambda_ponder")
+
+    @field_validator("lambda_unif")
+    @classmethod
+    def check_lambda_unif(cls, v: list):
+        """Validate lambda_unif."""
+        return validate_greater_equal_than_zero(cls, v, "lambda_unif")
+
+    @field_validator("reg_weight")
+    @classmethod
+    def check_reg_weight(cls, v: list):
+        """Validate reg_weight."""
+        return validate_greater_equal_than_zero(cls, v, "reg_weight")
+
+    @field_validator("alpha_init")
+    @classmethod
+    def check_alpha_init(cls, v: list):
+        """Validate alpha_init (any real number, since alpha=softplus(alpha_init))."""
+        return validate_numeric_values(v)
+
+    @field_validator("batch_size")
+    @classmethod
+    def check_batch_size(cls, v: list):
+        """Validate batch_size."""
+        return validate_greater_than_zero(cls, v, "batch_size")
+
+    @field_validator("epochs")
+    @classmethod
+    def check_epochs(cls, v: list):
+        """Validate epochs."""
+        return validate_greater_than_zero(cls, v, "epochs")
+
+    @field_validator("learning_rate")
+    @classmethod
+    def check_learning_rate(cls, v: list):
+        """Validate learning_rate."""
+        return validate_greater_than_zero(cls, v, "learning_rate")
+
+
 @params_registry.register("LightCCF")
 class LightCCF(RecomModel):
     """Definition of the model LightCCF.
