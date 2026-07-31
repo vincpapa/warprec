@@ -56,7 +56,7 @@ models:
     n_probes: 20               # P, Rademacher probes for the E_hat estimator
     n_anchors: 32              # R, degree-stratified anchors per node type
     temperature: 0.2           # theta
-    gamma: 0.0 # [0.0, 0.5, 1.0, 2.0]
+    gamma: 1.0 # [0.0, 0.5, 1.0, 2.0]
     lambda0: 0.0001 # [0.01, 0.02, 0.05, 0.1, 0.2]
     lambda_ponder: 0.01
     lambda_unif: 0.1
