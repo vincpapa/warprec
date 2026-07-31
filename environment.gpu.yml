@@ -1,4 +1,4 @@
-name: warprec
+name: warprec_v
 channels:
   - conda-forge
   - nvidia
