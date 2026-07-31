@@ -54,7 +54,7 @@ models:
     lambda0: 0.0001
     lambda_ponder: 0.001
     lambda_unif: 0.1
-    reg_weight: 0.0001
+    reg_weight: 0.01
     alpha_mode: fixed
     alpha_init: 1.5
     batch_size: 4096
