@@ -83,7 +83,18 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         lambda_ponder (float): The weight of the ponder loss.
         lambda_unif (float): The weight of the uniformity loss.
         reg_weight (float): The L2 regularization weight on the free embeddings.
-        alpha_init (float): The initial value of the pre-softplus alpha parameter.
+        alpha_mode (str): Either "trainable" (default) or "fixed". In "fixed"
+            mode, alpha is a frozen constant equal to alpha_init, never an
+            ``nn.Parameter`` and never optimized. In "trainable" mode (the
+            original behavior), alpha is derived from a learned raw parameter
+            ``alpha_hat``, initialized so the effective alpha starts exactly
+            at alpha_init.
+        alpha_init (float): The desired initial value of alpha itself (not a
+            pre-transform value), meaningful in both alpha_mode values.
+        alpha_max (float): Only used when alpha_mode="trainable". A value > 0
+            caps alpha via ``alpha_max * sigmoid(alpha_hat)`` instead of the
+            unbounded ``softplus(alpha_hat)``. <= 0 (the default) means no
+            cap, i.e. the original unbounded behavior.
         batch_size (int): The batch size used for training.
         epochs (int): The number of epochs.
         learning_rate (float): The learning rate value.
@@ -140,7 +151,9 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
     lambda_ponder: float
     lambda_unif: float
     reg_weight: float
+    alpha_mode: str
     alpha_init: float
+    alpha_max: float
     batch_size: int
     epochs: int
     learning_rate: float
@@ -161,10 +174,11 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
             self.n_items + 1, self.embedding_size, padding_idx=self.n_items
         )
 
-        # Learned controller parameters: mean-zero bias residual (K values) and the
-        # pre-softplus hazard sensitivity alpha_hat (alpha = softplus(alpha_hat) >= 0).
+        # Learned controller parameters: mean-zero bias residual (K values) and,
+        # in "trainable" alpha_mode, the raw hazard sensitivity alpha_hat (see
+        # `_init_alpha`/`_compute_alpha` for how alpha itself is derived).
         self.c_bias = nn.Parameter(torch.zeros(self.n_layers))
-        self.alpha_hat = nn.Parameter(torch.tensor(float(self.alpha_init)))
+        self._init_alpha()
 
         self.apply(self._init_weights)
         self.bpr_loss = BPRLoss()
@@ -193,6 +207,116 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
             "unif": 0.0,
         }
         self._epoch_batch_count: int = 0
+
+    # ------------------------------------------------------------------ #
+    # Alpha (hazard sensitivity) construction: fixed vs. trainable, capped
+    # vs. unbounded. See `_compute_alpha` for the corresponding read side.
+    # ------------------------------------------------------------------ #
+    @staticmethod
+    def _inverse_softplus(value: float) -> float:
+        """Solve ``x`` for ``softplus(x) = value``.
+
+        Args:
+            value (float): The target softplus output. Must be strictly
+                positive: softplus's range is the open interval (0, inf), so
+                no finite ``x`` maps to a non-positive value.
+
+        Returns:
+            float: The pre-softplus value ``x`` such that ``softplus(x) ==
+                value``.
+
+        Raises:
+            ValueError: If ``value`` is not strictly positive.
+        """
+        if value <= 0:
+            raise ValueError(
+                "alpha_init must be > 0 when alpha_mode='trainable' with no "
+                f"alpha_max cap (softplus's range is (0, inf)); got {value}. "
+                "Use alpha_mode='fixed' for alpha=0, or set a positive "
+                "alpha_max to switch to a bounded (sigmoid) parameterization."
+            )
+        return math.log(math.expm1(value))
+
+    @staticmethod
+    def _inverse_capped_sigmoid(value: float, cap: float) -> float:
+        """Solve ``x`` for ``cap * sigmoid(x) = value``.
+
+        Args:
+            value (float): The target output. Must be strictly between 0 and
+                ``cap``: sigmoid's range is the open interval (0, 1).
+            cap (float): The positive upper bound on alpha.
+
+        Returns:
+            float: The pre-sigmoid value ``x`` such that
+                ``cap * sigmoid(x) == value``.
+
+        Raises:
+            ValueError: If ``value`` is not strictly between 0 and ``cap``.
+        """
+        if not 0.0 < value < cap:
+            raise ValueError(
+                f"alpha_init must be strictly between 0 and alpha_max={cap} "
+                f"when alpha_mode='trainable' with a cap; got "
+                f"alpha_init={value}."
+            )
+        ratio = value / cap
+        return math.log(ratio / (1.0 - ratio))
+
+    def _init_alpha(self) -> None:
+        """Construct the hazard sensitivity alpha, per ``alpha_mode``.
+
+        - ``alpha_mode="fixed"``: alpha is a frozen buffer equal to
+          ``alpha_init`` directly (no transform, never an ``nn.Parameter``,
+          never optimized).
+        - ``alpha_mode="trainable"``: the raw parameter ``alpha_hat`` is an
+          ``nn.Parameter``, initialized via the inverse of whichever forward
+          transform ``_compute_alpha`` will apply (plain softplus if
+          ``alpha_max <= 0``, else the ``alpha_max``-capped sigmoid), so the
+          effective alpha starts exactly at ``alpha_init`` in either case.
+
+        Raises:
+            ValueError: If ``alpha_mode`` is not "trainable" or "fixed", if
+                ``alpha_init < 0`` in "fixed" mode, or if ``alpha_init`` is
+                not in the valid range of the chosen "trainable" transform
+                (see ``_inverse_softplus``/``_inverse_capped_sigmoid``).
+        """
+        if self.alpha_mode not in ("trainable", "fixed"):
+            raise ValueError(
+                f"alpha_mode must be 'trainable' or 'fixed', got {self.alpha_mode!r}."
+            )
+
+        if self.alpha_mode == "fixed":
+            if self.alpha_init < 0:
+                raise ValueError(
+                    "alpha_init must be >= 0 when alpha_mode='fixed' (alpha "
+                    f"is used directly, no softplus); got {self.alpha_init}."
+                )
+            self._alpha_fixed: Tensor
+            self.register_buffer("_alpha_fixed", torch.tensor(float(self.alpha_init)))
+            return
+
+        if self.alpha_max > 0:
+            alpha_hat_init = self._inverse_capped_sigmoid(
+                float(self.alpha_init), float(self.alpha_max)
+            )
+        else:
+            alpha_hat_init = self._inverse_softplus(float(self.alpha_init))
+        self.alpha_hat = nn.Parameter(torch.tensor(alpha_hat_init))
+
+    def _compute_alpha(self) -> Tensor:
+        """Compute the current hazard sensitivity alpha, per ``alpha_mode``.
+
+        Returns:
+            Tensor: The scalar current alpha value: the frozen constant in
+                "fixed" mode; ``softplus(alpha_hat)`` (unbounded) or
+                ``alpha_max * sigmoid(alpha_hat)`` (capped, when
+                ``alpha_max > 0``) in "trainable" mode.
+        """
+        if self.alpha_mode == "fixed":
+            return self._alpha_fixed
+        if self.alpha_max > 0:
+            return self.alpha_max * torch.sigmoid(self.alpha_hat)
+        return F.softplus(self.alpha_hat)
 
     # ------------------------------------------------------------------ #
     # One-time precompute (graph-only, does not depend on the embeddings)
@@ -629,7 +753,7 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
 
         b = self._bias_schedule()
 
-        alpha = F.softplus(self.alpha_hat)
+        alpha = self._compute_alpha()
         rho_rate = F.softplus(b.unsqueeze(0) - alpha * m)
         g = 1.0 - torch.exp(-rho_rate)
 
@@ -1054,7 +1178,7 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
             k_bar_user = self._kbar_for_nodes(self.kbar_sample_user_idx).cpu()
             k_bar_item = self._kbar_for_nodes(self.kbar_sample_item_idx).cpu()
 
-        alpha = F.softplus(self.alpha_hat).item()
+        alpha = self._compute_alpha().item()
         n_batches = max(self._epoch_batch_count, 1)
         loss_total = self._epoch_loss_sums["total"] / n_batches
         loss_bpr = self._epoch_loss_sums["bpr"] / n_batches

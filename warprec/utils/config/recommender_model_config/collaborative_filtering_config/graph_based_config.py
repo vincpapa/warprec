@@ -2,7 +2,7 @@
 from itertools import product
 from typing import ClassVar
 
-from pydantic import field_validator
+from pydantic import Field, field_validator
 from warprec.utils.config.model_configuration import (
     RecomModel,
     INT_FIELD,
@@ -394,7 +394,19 @@ class HALTGRAND(RecomModel):
         lambda_ponder (FLOAT_FIELD): List of values for the ponder loss weight.
         lambda_unif (FLOAT_FIELD): List of values for the uniformity loss weight.
         reg_weight (FLOAT_FIELD): List of values for reg_weight.
-        alpha_init (FLOAT_FIELD): List of values for the initial pre-softplus alpha.
+        alpha_mode (STR_FIELD): List of values for alpha_mode: 'trainable'
+            (default) or 'fixed'. Defaults to 'trainable' if omitted, matching
+            the original (pre-alpha_mode) behavior exactly.
+        alpha_init (FLOAT_FIELD): List of values for the desired initial value
+            of alpha itself (not a pre-transform value), in both modes. In
+            'fixed' mode alpha stays equal to alpha_init throughout training.
+            In 'trainable' mode, the underlying raw parameter is initialized
+            so that the effective alpha starts exactly at alpha_init.
+        alpha_max (FLOAT_FIELD): List of values for an optional cap on alpha
+            in 'trainable' mode, applied via a bounded sigmoid
+            parameterization instead of the unbounded softplus. A value <= 0
+            (the default) means 'no cap', i.e. the original unbounded softplus
+            behavior. Ignored in 'fixed' mode.
         batch_size (INT_FIELD): List of values for batch_size.
         epochs (INT_FIELD): List of values for epochs.
         learning_rate (FLOAT_FIELD): List of values for learning rate.
@@ -412,7 +424,13 @@ class HALTGRAND(RecomModel):
     lambda_ponder: FLOAT_FIELD
     lambda_unif: FLOAT_FIELD
     reg_weight: FLOAT_FIELD
+    # `validate_default=True` on both: unlike a plain `= default`, this makes
+    # pydantic run their field_validators (which wrap a scalar into the
+    # search-space-ready list form expected by `model_validation`) even when
+    # the field is omitted from the config entirely, not just when supplied.
+    alpha_mode: STR_FIELD = Field(default="trainable", validate_default=True)
     alpha_init: FLOAT_FIELD
+    alpha_max: FLOAT_FIELD = Field(default=0.0, validate_default=True)
     batch_size: INT_FIELD
     epochs: INT_FIELD
     learning_rate: FLOAT_FIELD
@@ -500,10 +518,25 @@ class HALTGRAND(RecomModel):
         """Validate reg_weight."""
         return validate_greater_equal_than_zero(cls, v, "reg_weight")
 
+    @field_validator("alpha_mode")
+    @classmethod
+    def check_alpha_mode(cls, v: list):
+        """Validate alpha_mode ('trainable' or 'fixed')."""
+        allowed = ["trainable", "fixed"]
+        return validate_str_list(cls, v, allowed, "alpha_mode")
+
     @field_validator("alpha_init")
     @classmethod
     def check_alpha_init(cls, v: list):
-        """Validate alpha_init (any real number, since alpha=softplus(alpha_init))."""
+        """Validate alpha_init (any real number; its exact meaning -- the
+        desired initial value of alpha itself -- is shared by both
+        alpha_mode values, see the class docstring)."""
+        return validate_numeric_values(v)
+
+    @field_validator("alpha_max")
+    @classmethod
+    def check_alpha_max(cls, v: list):
+        """Validate alpha_max (any real number; <= 0 means 'no cap')."""
         return validate_numeric_values(v)
 
     @field_validator("batch_size")
