@@ -1,11 +1,15 @@
-# pylint: disable = R0801, E1102, R0902, R0914, W0201, C0302
+# pylint: disable = R0801, E1102, R0902, R0914, W0201, C0302, R0915
 # W0201 (attribute-defined-outside-init): the one-time graph precompute is
 # factored into `_precompute_graph_signals` (called from `__init__`), not
 # inlined into `__init__`'s own body, for readability and testability; pylint
 # doesn't trace attribute assignments through called helper methods.
-# C0302 (too-many-lines): the model, its k_bar and dE diagnostics, and their
-# docstrings are all kept in this one file rather than split arbitrarily
-# across files for a single model class.
+# C0302 (too-many-lines): the model, its k_bar, dE and dS diagnostics, and
+# their docstrings are all kept in this one file rather than split
+# arbitrarily across files for a single model class.
+# R0915 (too-many-statements): `diagnose_delta_s`/`diagnose_delta_e` are each
+# one linear diagnostic routine (build signal, print representative-node
+# table, print aggregate stats/comparisons); splitting them further would
+# hurt readability more than the statement count helps.
 import csv
 import math
 import os
@@ -1085,3 +1089,182 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
 
         if csv_path is not None:
             self._write_delta_e_csv(csv_path, csv_rows)
+
+    # ------------------------------------------------------------------ #
+    # One-time specificity (S) and dS diagnostic. Complements
+    # `diagnose_delta_e`: unlike E (graph-only, frozen), S depends on the
+    # CURRENT embeddings X (via the residuals r_v^{(k)} = z_v^{(k)} - mu_v), so
+    # this must be run at a specific, identified point in training (pass an
+    # `epoch_label` for the log output) rather than being meaningful at any
+    # arbitrary time. Reuses `_specificity` as-is (same frozen anchors, same
+    # self-anchor masking, same mu = phi0 (phi0^T X) computed from the current
+    # X) -- this diagnostic only adds aggregation/reporting on top, and calls
+    # it with every node (not just a training batch) for complete statistics.
+    # Read-only: no_grad, no effect on training.
+    # ------------------------------------------------------------------ #
+    _DELTA_S_CSV_FIELDNAMES = ["node_id", "type", "degree", "k", "S", "dS"]
+
+    def _write_delta_s_csv(self, csv_path: str, rows: List[Dict[str, Any]]) -> None:
+        """Best-effort CSV write of the full per-(node, k) dS diagnostic data.
+        Never raises: a write failure is logged and otherwise swallowed.
+
+        Args:
+            csv_path (str): The destination CSV path (overwritten if it
+                already exists).
+            rows (List[Dict[str, Any]]): One dict per (node, k) pair, with
+                keys matching ``_DELTA_S_CSV_FIELDNAMES``.
+        """
+        try:
+            with open(csv_path, "w", newline="", encoding="utf-8") as csv_file:
+                writer = csv.DictWriter(
+                    csv_file, fieldnames=self._DELTA_S_CSV_FIELDNAMES
+                )
+                writer.writeheader()
+                writer.writerows(rows)
+            logger.attention(
+                f"[dS diagnostics] wrote {len(rows)} rows to "
+                f"{os.path.abspath(csv_path)}"
+            )
+        except OSError as error:
+            logger.attention(f"[dS diagnostics] could not write CSV: {error}")
+
+    def diagnose_delta_s(
+        self,
+        epoch_label: str = "current",
+        csv_path: Optional[str] = "deltaS_diagnostics.csv",
+    ) -> None:
+        """One-time diagnostic of the specificity signal ``S_v^{(k)}`` and its
+        SIGNED increments ``dS[v,k] = S[v,k+1] - S[v,k]``, which enter the
+        controller's marginal utility
+        ``m[v,k] = dE[v,k] + gamma*dS[v,k] - lambda0``. Reports, per type: the
+        same representative nodes as ``diagnose_delta_e`` (so the two tables
+        are directly comparable row-by-row), aggregate dS statistics over
+        every node, the scale of ``mean|dS[:,0]|`` against ``mean|dE[:,0]|``
+        (and the gamma value that would balance them), the coefficient of
+        variation of dE0 vs dS0 (higher CV = more node-specific), and the
+        Spearman correlation of S/dS against node degree.
+
+        Since S depends on the CURRENT embeddings (unlike the graph-only,
+        frozen E), this diagnostic is only meaningful at whatever point in
+        training it's called -- ``epoch_label`` identifies that point in the
+        log output (e.g. an epoch number or a checkpoint path); it has no
+        effect on the computation itself.
+
+        Read-only: runs under ``torch.no_grad()``, and never affects
+        training. Reuses ``_specificity`` unchanged (same frozen anchors,
+        the same self-anchor masking that already excludes a node from its
+        own softmax, and ``mu`` recomputed from the current X), called here
+        over every node rather than a training batch.
+
+        Args:
+            epoch_label (str): A label identifying the training state this
+                diagnostic reflects, printed in the log output.
+            csv_path (Optional[str]): Where to write the full per-(node, k)
+                CSV (columns: node_id, type, degree, k, S, dS). If None, the
+                CSV is skipped and only the log output is produced.
+        """
+        with torch.no_grad():
+            x = self._ego_embeddings()
+            z_list = self._propagate(x)
+            coeff = self._consensus(z_list[0])
+            n_nodes = self.n_users + self.n_items
+            all_idx = torch.arange(n_nodes, device=x.device)
+            s_all = self._specificity(z_list, coeff, all_idx).cpu()
+
+        d_s = s_all[:, 1:] - s_all[:, :-1]
+        e_hat = self.e_hat.detach().cpu()
+        d_e = e_hat[:, 1:] - e_hat[:, :-1]
+        degree = self.degree.detach().cpu()
+        n_layers = self.n_layers
+
+        logger.attention(
+            f"[dS diagnostics @ {epoch_label}] S and dS for representative "
+            f"nodes (K={n_layers})"
+        )
+        header_s = "  ".join(f"S{k}" for k in range(n_layers + 1))
+        header_ds = "  ".join(f"dS{k}" for k in range(n_layers))
+        logger.attention(f"type   node     deg    {header_s}    {header_ds}")
+
+        csv_rows: List[Dict[str, Any]] = []
+        types = (
+            ("user", slice(0, self.n_users), 0, self.n_users),
+            ("item", slice(self.n_users, None), self.n_users, self.n_items),
+        )
+
+        for node_type, node_slice, offset, n_type_nodes in types:
+            degree_t = degree[node_slice]
+            s_t = s_all[node_slice]
+            d_s_t = d_s[node_slice]
+
+            for local_idx in self._representative_node_local_indices(degree_t):
+                global_idx = offset + local_idx
+                node_deg = int(degree_t[local_idx].item())
+                s_str = "  ".join(f"{v:.4e}" for v in s_t[local_idx].tolist())
+                ds_str = "  ".join(f"{v:.4e}" for v in d_s_t[local_idx].tolist())
+                logger.attention(
+                    f"{node_type:5s}  {global_idx:6d}  {node_deg:5d}   "
+                    f"{s_str}   {ds_str}"
+                )
+
+            for local_idx in range(n_type_nodes):
+                global_idx = offset + local_idx
+                node_deg = int(degree_t[local_idx].item())
+                for k in range(n_layers + 1):
+                    csv_rows.append(
+                        {
+                            "node_id": global_idx,
+                            "type": node_type,
+                            "degree": node_deg,
+                            "k": k,
+                            "S": s_t[local_idx, k].item(),
+                            "dS": (d_s_t[local_idx, k].item() if k < n_layers else ""),
+                        }
+                    )
+
+        for node_type, node_slice, _offset, _n_type_nodes in types:
+            degree_t = degree[node_slice]
+            s_t = s_all[node_slice]
+            d_s_t = d_s[node_slice]
+            d_e_t = d_e[node_slice]
+
+            logger.attention(
+                f"[dS diagnostics] dS[:,k] stats over all {node_type.upper()} nodes:"
+            )
+            for k in range(n_layers):
+                stats = self._kbar_stats(d_s_t[:, k])
+                logger.attention(
+                    f"  k={k}: mean={stats['mean']:.4e} std={stats['std']:.4e} "
+                    f"min={stats['min']:.4e} max={stats['max']:.4e} "
+                    f"p10={stats['p10']:.4e} p50={stats['p50']:.4e} "
+                    f"p90={stats['p90']:.4e}"
+                )
+
+            de0 = d_e_t[:, 0]
+            ds0 = d_s_t[:, 0]
+            mean_abs_de0 = de0.abs().mean().item()
+            mean_abs_ds0 = ds0.abs().mean().item()
+            ratio = mean_abs_de0 / (mean_abs_ds0 + self._EPS)
+            logger.attention(
+                f"[scale comparison @ k=0, {node_type}] mean|dE0|="
+                f"{mean_abs_de0:.4e} mean|dS0|={mean_abs_ds0:.4e} "
+                f"ratio={ratio:.4g} -> suggested gamma ~ {ratio:.4g} "
+                "(to balance gamma*dS against dE at layer 0)"
+            )
+
+            cv_de0 = de0.std().item() / (abs(de0.mean().item()) + self._EPS)
+            cv_ds0 = ds0.std().item() / (abs(ds0.mean().item()) + self._EPS)
+            logger.attention(
+                f"[node-specificity, {node_type}] CV(dE0)={cv_de0:.4g} "
+                f"CV(dS0)={cv_ds0:.4g} (higher CV = more node-specific)"
+            )
+
+            corr_s, pvalue_s = spearmanr(s_t[:, 0].numpy(), degree_t.numpy())
+            corr_ds, pvalue_ds = spearmanr(ds0.numpy(), degree_t.numpy())
+            logger.attention(
+                f"[spearman @ k=0, {node_type}] S vs degree: corr={corr_s:.4f} "
+                f"(p={pvalue_s:.3g}); dS vs degree: corr={corr_ds:.4f} "
+                f"(p={pvalue_ds:.3g})"
+            )
+
+        if csv_path is not None:
+            self._write_delta_s_csv(csv_path, csv_rows)
