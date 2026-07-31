@@ -62,9 +62,6 @@ models:
     epochs: 300
     learning_rate: 0.001
 evaluation:
-  # top_k: [10, 20]
-  # metrics: [nDCG, Precision, Recall, HitRate]
-  # strategy: full
   full_evaluation_on_report: True
   validation_metric: nDCG@10
   top_k: [10]
@@ -74,5 +71,5 @@ evaluation:
   seed: 42
 general:
   device: cuda
-  cuda_visible_devices: [1]
+  cuda_visible_devices: [0]
   time_report: False
