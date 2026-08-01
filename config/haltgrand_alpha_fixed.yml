@@ -44,7 +44,7 @@ models:
       patience: 20
       grace_period: 20
     embedding_size: 64
-    n_layers: [6]
+    n_layers: 6
     diffusion_step: 0.0
     eps_delta: 0.5
     n_probes: 20
@@ -52,9 +52,9 @@ models:
     temperature: 0.2
     gamma: 20.0
     lambda0: 0.0001
-    lambda_ponder: 0.0
-    lambda_unif: 0.1
-    reg_weight: [0.01]
+    lambda_ponder: 0.001
+    lambda_unif: 0.001
+    reg_weight: 0.01
     alpha_mode: fixed
     alpha_init: 1.5
     batch_size: 4096
