@@ -20,9 +20,9 @@ writer:
   writing_method: local
   local_experiment_path: experiment/haltgrand/alpha_trainable
   save_split: True
-filtering:
-  IterativeKCore:
-    min_interactions: 10
+#filtering:
+#  IterativeKCore:
+#    min_interactions: 10
 splitter:
   test_splitting:
     strategy: random_holdout
@@ -51,7 +51,7 @@ models:
     temperature: 0.2
     gamma: 20.0
     lambda0: 0.0001
-    lambda_ponder: 0.0
+    lambda_ponder: 0.001
     lambda_unif: 0.1
     reg_weight: 0.01
     alpha_mode: trainable
@@ -65,7 +65,9 @@ evaluation:
   validation_metric: nDCG@10
   top_k: [10]
   metrics: [nDCG, Recall, EPC, Gini]
-  strategy: full
+  # strategy: full
+  strategy: sampled
+  num_negatives: 100
   batch_size: 1024
   seed: 42
 general:
