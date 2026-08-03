@@ -109,9 +109,12 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         vector buffer), ``user_anchor_idx``/``item_anchor_idx`` (the frozen
         anchor node indices buffers), ``e_hat`` (the frozen, probe-based
         exploitability signal buffer), ``degree`` (the frozen raw node degree
-        buffer, used only for diagnostics), and ``kbar_sample_user_idx``/
+        buffer, used only for diagnostics), ``kbar_sample_user_idx``/
         ``kbar_sample_item_idx`` (the frozen, uniformly-sampled node indices
-        used by the per-epoch k_bar diagnostic).
+        used by the per-epoch k_bar diagnostic), and
+        ``kbar_sample_user_bucket``/``kbar_sample_item_bucket`` (the frozen
+        degree-quartile bucket, 0=lowest to 3=highest, of each node in that
+        same sample, used by the per-epoch dE/dS-by-degree diagnostic).
     """
 
     DATALOADER_TYPE = DataLoaderType.POS_NEG_LOADER
@@ -195,6 +198,7 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         # and the resolved CSV path (cached so every row lands in the same file).
         self._last_kbar_log_epoch: int = -1
         self._kbar_csv_path: Optional[str] = None
+        self._delta_m_csv_path: Optional[str] = None
 
         # Per-epoch loss accumulators for the same diagnostic (reset in
         # `on_train_epoch_start`, accumulated in `training_step`, averaged and
@@ -441,6 +445,16 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         self.register_buffer("kbar_sample_user_idx", kbar_sample_user_idx)
         self.register_buffer("kbar_sample_item_idx", kbar_sample_item_idx)
 
+        # Degree-quartile bucket (0=lowest to 3=highest) of each node in the
+        # same fixed sample, for the per-epoch dE/dS-by-degree diagnostic
+        # (see `_log_kbar_diagnostics`). Frozen alongside the sample itself.
+        kbar_sample_user_bucket = self._degree_quartile_buckets(kbar_sample_user_idx)
+        kbar_sample_item_bucket = self._degree_quartile_buckets(kbar_sample_item_idx)
+        self.kbar_sample_user_bucket: Tensor
+        self.kbar_sample_item_bucket: Tensor
+        self.register_buffer("kbar_sample_user_bucket", kbar_sample_user_bucket)
+        self.register_buffer("kbar_sample_item_bucket", kbar_sample_item_bucket)
+
     def _power_iteration(
         self, b_delta: SparseTensor, n_nodes: int
     ) -> Tuple[float, Tensor]:
@@ -533,6 +547,31 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         generator = torch.Generator().manual_seed(seed)
         local_idx = torch.randperm(n_type_nodes, generator=generator)[:sample_size]
         return (local_idx + offset).long()
+
+    _DELTA_M_N_BUCKETS = 4
+
+    def _degree_quartile_buckets(self, sample_idx: Tensor) -> Tensor:
+        """Assign each node in a fixed diagnostic sample to a degree-quartile
+        bucket, for the per-epoch dE/dS-by-degree diagnostic (see
+        ``_log_kbar_diagnostics``).
+
+        Bucket edges are the SAMPLE's own quartiles (not the full graph's),
+        so the ``_DELTA_M_N_BUCKETS`` buckets are ~equally sized within the
+        sample by construction, regardless of the full population's degree
+        distribution.
+
+        Args:
+            sample_idx (Tensor): The fixed diagnostic sample's global node
+                indices (see ``_sample_fixed_diagnostic_nodes``).
+
+        Returns:
+            Tensor: The (len(sample_idx),) bucket index, 0 (lowest degree) to
+                ``_DELTA_M_N_BUCKETS - 1`` (highest), of each sampled node.
+        """
+        sample_degree = self.degree[sample_idx].float()
+        levels = torch.linspace(0.0, 1.0, self._DELTA_M_N_BUCKETS + 1)[1:-1]
+        edges = torch.quantile(sample_degree, levels)
+        return torch.bucketize(sample_degree, edges)
 
     def _estimate_exploitability(
         self,
@@ -910,7 +949,15 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
             return z.new_zeros(())
 
         z_hat = F.normalize(z, p=2, dim=1)
-        sq_dist = torch.cdist(z_hat, z_hat, p=2).pow(2)
+        # z_hat has unit norm, so ||a-b||^2 = 2 - 2*(a.b) exactly: addmm fuses
+        # the scale-and-subtract into the same GEMM as the dot product itself
+        # (one pass over the (n, n) output instead of cdist's sqrt-then-
+        # pow(2) plus a separate elementwise combine). clamp guards only
+        # against float rounding pushing a near-zero (near-duplicate
+        # embeddings) distance slightly negative.
+        sq_dist = torch.addmm(
+            z_hat.new_tensor(2.0), z_hat, z_hat.T, beta=1.0, alpha=-2.0
+        ).clamp(min=0.0)
         off_diag = ~torch.eye(n, dtype=torch.bool, device=z.device)
         return torch.log(torch.exp(-2.0 * sq_dist[off_diag]).mean() + self._EPS)
 
@@ -1146,6 +1193,113 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
                 f"HALTGRAND: could not write k_bar diagnostics CSV: {error}"
             )
 
+    # ------------------------------------------------------------------ #
+    # Read-only per-epoch dE/dS-by-degree-bucket diagnostic: tracks, per
+    # degree quartile, the layer-0 exploitability increment (dE0, frozen --
+    # graph-only, does not change across epochs), the layer-0 specificity
+    # increment (dS0, computed from the current embeddings, so this DOES
+    # move across epochs), gamma*dS0 (its actual contribution to m, on the
+    # same scale as dE0), and m0 = dE0 + gamma*dS0 - lambda0 itself -- to see
+    # directly, over training, whether and where (which degree range) m
+    # turns negative and drives the hazard toward "stop everywhere".
+    # ------------------------------------------------------------------ #
+    _DELTA_M_CSV_FIELDNAMES = [
+        "epoch",
+        "type",
+        "bucket",
+        "n_nodes",
+        "mean_degree",
+        "dE0_mean",
+        "dS0_mean",
+        "gamma_dS0_mean",
+        "m0_mean",
+    ]
+
+    def _delta_m_stats_by_bucket(
+        self,
+        epoch: int,
+        node_type: str,
+        degree_sample: Tensor,
+        bucket_sample: Tensor,
+        d_e0: Tensor,
+        d_s0: Tensor,
+    ) -> List[Dict[str, Any]]:
+        """Aggregate dE0/dS0/m0 by degree-quartile bucket for one node type.
+
+        Args:
+            epoch (int): The (1-indexed) epoch number, recorded in each row.
+            node_type (str): "user" or "item", recorded in each row.
+            degree_sample (Tensor): The (n,) degree of each sampled node.
+            bucket_sample (Tensor): The (n,) degree-quartile bucket (see
+                ``_degree_quartile_buckets``) of each sampled node.
+            d_e0 (Tensor): The (n,) layer-0 exploitability increment
+                ``E[:,1] - E[:,0]`` of each sampled node.
+            d_s0 (Tensor): The (n,) layer-0 specificity increment
+                ``S[:,1] - S[:,0]`` of each sampled node.
+
+        Returns:
+            List[Dict[str, Any]]: One row per bucket, with keys matching
+                ``_DELTA_M_CSV_FIELDNAMES``. A bucket with no sampled nodes
+                (possible on a tiny graph) is skipped.
+        """
+        rows: List[Dict[str, Any]] = []
+        for bucket in range(self._DELTA_M_N_BUCKETS):
+            mask = bucket_sample == bucket
+            n_nodes = int(mask.sum().item())
+            if n_nodes == 0:
+                continue
+            de0_mean = d_e0[mask].mean().item()
+            ds0_mean = d_s0[mask].mean().item()
+            gamma_ds0_mean = self.gamma * ds0_mean
+            rows.append(
+                {
+                    "epoch": epoch,
+                    "type": node_type,
+                    "bucket": bucket,
+                    "n_nodes": n_nodes,
+                    "mean_degree": degree_sample[mask].float().mean().item(),
+                    "dE0_mean": de0_mean,
+                    "dS0_mean": ds0_mean,
+                    "gamma_dS0_mean": gamma_ds0_mean,
+                    "m0_mean": de0_mean + gamma_ds0_mean - self.lambda0,
+                }
+            )
+        return rows
+
+    def _append_delta_m_csv(self, rows: List[Dict[str, Any]]) -> None:
+        """Best-effort append of dE/dS-by-degree-bucket rows to a per-run CSV
+        file. Never raises: a write failure is logged and otherwise
+        swallowed, since this diagnostic must never be able to interrupt
+        training.
+
+        Args:
+            rows (List[Dict[str, Any]]): One dict per (type, bucket), with
+                keys matching ``_DELTA_M_CSV_FIELDNAMES``.
+        """
+        if self._delta_m_csv_path is None:
+            self._delta_m_csv_path = "delta_m_per_epoch.csv"
+
+        try:
+            write_header = not os.path.exists(self._delta_m_csv_path)
+            with open(
+                self._delta_m_csv_path, "a", newline="", encoding="utf-8"
+            ) as csv_file:
+                writer = csv.DictWriter(
+                    csv_file, fieldnames=self._DELTA_M_CSV_FIELDNAMES
+                )
+                if write_header:
+                    writer.writeheader()
+                writer.writerows(rows)
+            if write_header:
+                logger.attention(
+                    "HALTGRAND: writing dE/dS-by-degree diagnostics to "
+                    f"{os.path.abspath(self._delta_m_csv_path)}"
+                )
+        except OSError as error:
+            logger.attention(
+                f"HALTGRAND: could not write dE/dS-by-degree diagnostics CSV: {error}"
+            )
+
     def _log_kbar_diagnostics(self, epoch: int) -> None:
         """Log the k_bar (expected propagation depth, Eq. 23) diagnostic for
         this epoch: summary statistics, the fraction of nodes in each fixed
@@ -1155,14 +1309,20 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         verbosity), the current ``alpha``, this epoch's average loss (total
         and BPR/ponder/uniformity components), and the most recently
         available validation nDCG (best-effort, see
-        ``_lookup_latest_val_ndcg``).
+        ``_lookup_latest_val_ndcg``). Also logs the companion dE0/dS0/m0
+        diagnostic, aggregated by degree quartile (see
+        ``_delta_m_stats_by_bucket``): dE0 is frozen (graph-only) and never
+        changes across epochs, dS0 and therefore m0 = dE0 + gamma*dS0 -
+        lambda0 do, so this shows directly, per degree range, whether/where
+        m turns negative over training.
 
         Computed on the FIXED, uniformly-sampled node subset from precompute
         (``kbar_sample_user_idx``/``kbar_sample_item_idx``, up to
         ``_KBAR_SAMPLE_SIZE`` nodes per type, same nodes every epoch), not the
         full graph: the propagation itself still runs over the whole graph
-        (message passing requires it; see ``_kbar_for_nodes``), only the
-        controller/specificity computation is scoped to the sample.
+        once (message passing requires it), shared between both node types
+        and both diagnostics; only the controller/specificity computation is
+        scoped to the sample.
 
         Args:
             epoch (int): The (1-indexed, human-facing) epoch number to
@@ -1175,8 +1335,23 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         self._last_kbar_log_epoch = epoch
 
         with torch.no_grad():
-            k_bar_user = self._kbar_for_nodes(self.kbar_sample_user_idx).cpu()
-            k_bar_item = self._kbar_for_nodes(self.kbar_sample_item_idx).cpu()
+            x = self._ego_embeddings()
+            z_list = self._propagate(x)
+            coeff = self._consensus(z_list[0])
+
+            sample_info: Dict[str, Dict[str, Tensor]] = {}
+            for node_type, sample_idx in (
+                ("user", self.kbar_sample_user_idx),
+                ("item", self.kbar_sample_item_idx),
+            ):
+                s_active = self._specificity(z_list, coeff, sample_idx)
+                e_active = self.e_hat[sample_idx]
+                _, k_bar = self._survival_controller(e_active, s_active)
+                sample_info[node_type] = {
+                    "k_bar": k_bar.cpu(),
+                    "d_e0": (e_active[:, 1] - e_active[:, 0]).cpu(),
+                    "d_s0": (s_active[:, 1] - s_active[:, 0]).cpu(),
+                }
 
         alpha = self._compute_alpha().item()
         n_batches = max(self._epoch_batch_count, 1)
@@ -1189,10 +1364,12 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
         degree = self.degree.detach().cpu()
 
         rows: List[Dict[str, Any]] = []
-        for node_type, k_bar_sample, sample_idx in (
-            ("user", k_bar_user, self.kbar_sample_user_idx),
-            ("item", k_bar_item, self.kbar_sample_item_idx),
+        delta_m_rows: List[Dict[str, Any]] = []
+        for node_type, sample_idx, bucket_sample in (
+            ("user", self.kbar_sample_user_idx, self.kbar_sample_user_bucket),
+            ("item", self.kbar_sample_item_idx, self.kbar_sample_item_bucket),
         ):
+            k_bar_sample = sample_info[node_type]["k_bar"]
             stats = self._kbar_stats(k_bar_sample)
             fractions = self._kbar_threshold_fractions(k_bar_sample)
             degree_sample = degree[sample_idx.cpu()]
@@ -1237,6 +1414,26 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
                 }
             )
 
+            bucket_rows = self._delta_m_stats_by_bucket(
+                epoch,
+                node_type,
+                degree_sample,
+                bucket_sample.cpu(),
+                sample_info[node_type]["d_e0"],
+                sample_info[node_type]["d_s0"],
+            )
+            for bucket_row in bucket_rows:
+                logger.attention(
+                    f"[delta_m @ epoch {epoch}, {node_type}, "
+                    f"bucket {bucket_row['bucket']}] n={bucket_row['n_nodes']} "
+                    f"mean_degree={bucket_row['mean_degree']:.2f} "
+                    f"dE0={bucket_row['dE0_mean']:.4e} "
+                    f"dS0={bucket_row['dS0_mean']:.4e} "
+                    f"gamma*dS0={bucket_row['gamma_dS0_mean']:.4e} "
+                    f"m0={bucket_row['m0_mean']:.4e}"
+                )
+            delta_m_rows.extend(bucket_rows)
+
         logger.attention(
             f"[k_bar @ epoch {epoch}] alpha={alpha:.4f} loss_total={loss_total:.4f} "
             f"loss_bpr={loss_bpr:.4f} loss_ponder={loss_ponder:.4f} "
@@ -1244,6 +1441,7 @@ class HALTGRAND(GraphRecommenderUtils, IterativeRecommender):
             f"val_ndcg={'n/a' if val_ndcg is None else f'{val_ndcg:.4f}'}"
         )
         self._append_kbar_csv(rows)
+        self._append_delta_m_csv(delta_m_rows)
 
     def _is_rank_zero(self) -> bool:
         """Whether this process should run/log the k_bar diagnostic: always
