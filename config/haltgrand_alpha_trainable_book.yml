@@ -48,7 +48,7 @@ models:
     alpha_init: 1.0
     alpha_max: 0.0
     batch_size: 4096
-    epochs: 300
+    epochs: 1000
     learning_rate: 0.001
 evaluation:
   full_evaluation_on_report: True
