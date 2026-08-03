@@ -1,0 +1,708 @@
+nohup: ignoring input
+/opt/miniconda3/envs/warprec/lib/python3.12/site-packages/hyperopt/atpe.py:19: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+03-08-2026 13:23:39 - WarpRec - 📝 [37mStarting experiment.[0m
+03-08-2026 13:23:39 - WarpRec - 📝 [37mReading train configuration file in: config/lightgcn_book.yml[0m
+03-08-2026 13:23:39 - WarpRec - 📝 [37mReading process completed correctly.[0m
+2026-08-03 13:23:39,900	WARNING services.py:397 -- Found multiple active Ray instances: {'herd-ray-head:6379', '10.74.0.72:6379'}. Connecting to latest cluster at 10.74.0.72:6379. You can override this by setting the `--address` flag or `RAY_ADDRESS` environment variable.
+2026-08-03 13:23:39,900	INFO worker.py:1833 -- Connecting to existing Ray cluster at address: 10.74.0.72:6379...
+2026-08-03 13:23:39,912	INFO worker.py:2013 -- Connected to Ray cluster.
+2026-08-03 13:23:40,006	INFO packaging.py:588 -- Creating a file package for local module 'warprec'.
+2026-08-03 13:23:40,138	INFO packaging.py:380 -- Pushing file package 'gcs://_ray_pkg_57bbb2a0e1648d4b.zip' (3.79MiB) to Ray cluster...
+2026-08-03 13:23:40,154	INFO packaging.py:393 -- Successfully pushed file package 'gcs://_ray_pkg_57bbb2a0e1648d4b.zip'.
+/opt/miniconda3/envs/warprec/lib/python3.12/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+03-08-2026 13:23:40 - WarpRec - ✅ [32mConnected to existing Ray cluster.[0m
+03-08-2026 13:23:40 - WarpRec - 📝 [37mSetting up experiment local folder.[0m
+03-08-2026 13:23:40 - WarpRec - 📝 [37mExperiment folder created successfully.[0m
+03-08-2026 13:23:40 - WarpRec - 📝 [37mDelegating data preparation to Ray cluster[0m
+[36m(pid=4027644)[0m /opt/miniconda3/envs/warprec/lib/python3.12/site-packages/hyperopt/atpe.py:19: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+[36m(pid=4027644)[0m   import pkg_resources
+[36m(remote_data_preparation pid=4027644)[0m 03-08-2026 13:23:50 - WarpRec - 📝 [37mStarting reading split process from: datasets/amazon_book/ using polars[0m
+[36m(remote_data_preparation pid=4027644)[0m 03-08-2026 13:23:50 - WarpRec - ✅ [32mReading process completed successfully.[0m
+[36m(remote_data_preparation pid=4027644)[0m 03-08-2026 13:23:50 - WarpRec - 📝 [37mCreating main dataset[0m
+[36m(remote_data_preparation pid=4027644)[0m 03-08-2026 13:23:50 - WarpRec - 📝 [37m----------------------------------Train set----------------------------------[0m
+[36m(remote_data_preparation pid=4027644)[0m 03-08-2026 13:23:50 - WarpRec - 📊 [36mNumber of users: 52643      Number of items: 91599      Transactions: 2380730[0m
+[36m(remote_data_preparation pid=4027644)[0m 03-08-2026 13:23:50 - WarpRec - 📝 [37m-----------------------------------------------------------------------------[0m
+[36m(remote_data_preparation pid=4027644)[0m 03-08-2026 13:23:51 - WarpRec - 📝 [37m----------------------------------Test set----------------------------------[0m
+[36m(remote_data_preparation pid=4027644)[0m 03-08-2026 13:23:51 - WarpRec - 📊 [36mNumber of users: 52639      Number of items: 82629      Transactions: 603378[0m
+[36m(remote_data_preparation pid=4027644)[0m 03-08-2026 13:23:51 - WarpRec - 📝 [37m----------------------------------------------------------------------------[0m
+[36m(remote_data_preparation pid=4027644)[0m 03-08-2026 13:23:51 - WarpRec - 📝 [37mPreparing main dataset inner structures for evaluation.[0m
+03-08-2026 13:23:51 - WarpRec - ✅ [32mData preparation completed in 12.29 seconds.[0m
+03-08-2026 13:23:51 - WarpRec - 📢 [33mValidation metric for this experiment has been set to: nDCG@10[0m
+[36m(pid=4027907)[0m /opt/miniconda3/envs/warprec/lib/python3.12/site-packages/hyperopt/atpe.py:19: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+[36m(pid=4027907)[0m   import pkg_resources
+[36m(TrainController pid=4028103)[0m /opt/miniconda3/envs/warprec/lib/python3.12/site-packages/hyperopt/atpe.py:19: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+[36m(TrainController pid=4028103)[0m   import pkg_resources
+[36m(TrainController pid=4028103)[0m Attempting to start training worker group of size 1 with the following resources: [{'CPU': 1.0, 'GPU': 1}] * 1
+[36m(RayTrainWorker pid=4028311)[0m /opt/miniconda3/envs/warprec/lib/python3.12/site-packages/hyperopt/atpe.py:19: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+[36m(RayTrainWorker pid=4028311)[0m   import pkg_resources
+[36m(TrainController pid=4028103)[0m Started training worker group of size 1: 
+[36m(TrainController pid=4028103)[0m - (ip=10.74.0.72, pid=4028311) world_rank=0, local_rank=0, node_rank=0
+[36m(RayTrainWorker pid=4028311)[0m Setting up process group for: env:// [rank=0, world_size=1]
+╭────────────────────────────────────────────────────────────────────────╮
+│ Configuration for experiment     train_driver_fn_2026-08-03_13-23-52   │
+├────────────────────────────────────────────────────────────────────────┤
+│ Search algorithm                 BasicVariantGenerator                 │
+│ Scheduler                        FIFOSchedulerWrapper                  │
+│ Number of trials                 1                                     │
+╰────────────────────────────────────────────────────────────────────────╯
+
+View detailed results here: /home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/train_driver_fn_2026-08-03_13-23-52
+To visualize your results with TensorBoard, run: `tensorboard --logdir /tmp/ray/session_2026-07-30_08-57-47_027174_771826/artifacts/2026-08-03_13-23-52/train_driver_fn_2026-08-03_13-23-52/driver_artifacts`
+
+Trial status: 1 PENDING
+Current time: 2026-08-03 13:23:52. Total running time: 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   PENDING                  64            3         0.0001           4096       1000             0.001 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+Trial LightGCN_LyricalMacaqueOfEmphasis started with configuration:
+╭───────────────────────────────────────────────────────────╮
+│ Trial LightGCN_LyricalMacaqueOfEmphasis config            │
+├───────────────────────────────────────────────────────────┤
+│ batch_size                                           4096 │
+│ embedding_size                                         64 │
+│ epochs                                               1000 │
+│ learning_rate                                       0.001 │
+│ n_layers                                                3 │
+│ reg_weight                                         0.0001 │
+╰───────────────────────────────────────────────────────────╯
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:24:22. Total running time: 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:24:52. Total running time: 1min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:25:22. Total running time: 1min 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m [rank0]:[W803 13:25:25.276174976 ProcessGroupNCCL.cpp:4715] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 as device used by this process is currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. You can pecify device_id in init_process_group() to force use of a particular device.
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-25-25.911787)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 1: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-25-25.911787), metrics={'nDCG@10': 0.0070487684570252895, 'Recall@10': 0.006225635763257742, 'EPC@10': 0.005940354894846678, 'Gini@10': 0.9995278120040894, 'best_nDCG@10': 0.0070487684570252895, 'loss': 0.4421495199203491, 'ram_peak_mb': 7988.5546875, 'vram_peak_mb': 2104.56884765625, 'epoch': 0, 'step': 582}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-26-20.905725)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 2: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-26-20.905725), metrics={'nDCG@10': 0.009130359627306461, 'Recall@10': 0.008198754861950874, 'EPC@10': 0.007655782625079155, 'Gini@10': 0.9992984533309937, 'best_nDCG@10': 0.009130359627306461, 'loss': 0.28347355127334595, 'ram_peak_mb': 9061.578125, 'vram_peak_mb': 2104.5869140625, 'epoch': 1, 'step': 1164}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:25:52. Total running time: 2min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.0070487684570252895 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)      nDCG@10     Recall@10       EPC@10     Gini@10 │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        1            82.9191   0.00704877    0.00622564   0.00594035    0.999528 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:26:22. Total running time: 2min 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.009130359627306461 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)      nDCG@10     Recall@10       EPC@10     Gini@10 │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        2            139.206   0.00913036    0.00819875   0.00765578    0.999298 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:26:53. Total running time: 3min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.009130359627306461 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)      nDCG@10     Recall@10       EPC@10     Gini@10 │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        2            139.206   0.00913036    0.00819875   0.00765578    0.999298 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-27-14.837471)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 3: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-27-14.837471), metrics={'nDCG@10': 0.009981994517147541, 'Recall@10': 0.008963585831224918, 'EPC@10': 0.008358576335012913, 'Gini@10': 0.9991515278816223, 'best_nDCG@10': 0.009981994517147541, 'loss': 0.23340049386024475, 'ram_peak_mb': 9078.1796875, 'vram_peak_mb': 2104.5927734375, 'epoch': 2, 'step': 1746}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-28-09.689273)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 4: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-28-09.689273), metrics={'nDCG@10': 0.010654589161276817, 'Recall@10': 0.009485217742621899, 'EPC@10': 0.00891296099871397, 'Gini@10': 0.9990047216415405, 'best_nDCG@10': 0.010654589161276817, 'loss': 0.20201840996742249, 'ram_peak_mb': 9080.51953125, 'vram_peak_mb': 2104.5927734375, 'epoch': 3, 'step': 2328}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:27:23. Total running time: 3min 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.009981994517147541 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)      nDCG@10     Recall@10       EPC@10     Gini@10 │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        3            191.521   0.00998199    0.00896359   0.00835858    0.999152 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:27:53. Total running time: 4min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.009981994517147541 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)      nDCG@10     Recall@10       EPC@10     Gini@10 │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        3            191.521   0.00998199    0.00896359   0.00835858    0.999152 │
+╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:28:23. Total running time: 4min 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.010654589161276817 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10       EPC@10     Gini@10 │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        4            247.892   0.0106546    0.00948522   0.00891296    0.999005 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-29-04.226589)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 5: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-29-04.226589), metrics={'nDCG@10': 0.011197388172149658, 'Recall@10': 0.009954532608389854, 'EPC@10': 0.009351829998195171, 'Gini@10': 0.9988673329353333, 'best_nDCG@10': 0.011197388172149658, 'loss': 0.17986178398132324, 'ram_peak_mb': 9082.09765625, 'vram_peak_mb': 2104.5927734375, 'epoch': 4, 'step': 2910}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:28:53. Total running time: 5min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.010654589161276817 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10       EPC@10     Gini@10 │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        4            247.892   0.0106546    0.00948522   0.00891296    0.999005 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:29:23. Total running time: 5min 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.011197388172149658 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10       EPC@10     Gini@10 │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        5            302.206   0.0111974    0.00995453   0.00935183    0.998867 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:29:53. Total running time: 6min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.011197388172149658 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10       EPC@10     Gini@10 │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        5            302.206   0.0111974    0.00995453   0.00935183    0.998867 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-29-58.685897)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 6: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-29-58.685897), metrics={'nDCG@10': 0.011748090386390686, 'Recall@10': 0.010435469448566437, 'EPC@10': 0.00980589259415865, 'Gini@10': 0.9987338185310364, 'best_nDCG@10': 0.011748090386390686, 'loss': 0.16317620873451233, 'ram_peak_mb': 9083.41015625, 'vram_peak_mb': 2104.5927734375, 'epoch': 5, 'step': 3492}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-30-53.035399)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 7: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-30-53.035399), metrics={'nDCG@10': 0.01216304674744606, 'Recall@10': 0.010807636193931103, 'EPC@10': 0.010148140601813793, 'Gini@10': 0.998605489730835, 'best_nDCG@10': 0.01216304674744606, 'loss': 0.14965754747390747, 'ram_peak_mb': 9083.69140625, 'vram_peak_mb': 2104.5927734375, 'epoch': 6, 'step': 4074}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:30:23. Total running time: 6min 30s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.011748090386390686 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10       EPC@10     Gini@10 │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        6            356.572   0.0117481     0.0104355   0.00980589    0.998734 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:30:53. Total running time: 7min 0s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.011748090386390686 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10       EPC@10     Gini@10 │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        6            356.572   0.0117481     0.0104355   0.00980589    0.998734 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:31:23. Total running time: 7min 31s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01216304674744606 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        7            410.906    0.012163     0.0108076   0.0101481    0.998605 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-31-47.898845)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 8: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-31-47.898845), metrics={'nDCG@10': 0.012661811895668507, 'Recall@10': 0.011268718168139458, 'EPC@10': 0.01055756863206625, 'Gini@10': 0.9984829425811768, 'best_nDCG@10': 0.012661811895668507, 'loss': 0.13960614800453186, 'ram_peak_mb': 9596.9453125, 'vram_peak_mb': 2104.5927734375, 'epoch': 7, 'step': 4656}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-32-42.534312)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 9: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-32-42.534312), metrics={'nDCG@10': 0.012944738380610943, 'Recall@10': 0.011529752984642982, 'EPC@10': 0.010788078419864178, 'Gini@10': 0.9983652830123901, 'best_nDCG@10': 0.012944738380610943, 'loss': 0.13047659397125244, 'ram_peak_mb': 9598.17578125, 'vram_peak_mb': 2104.5927734375, 'epoch': 8, 'step': 5238}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:31:53. Total running time: 8min 1s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.012661811895668507 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        8            465.242   0.0126618     0.0112687   0.0105576    0.998483 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:32:23. Total running time: 8min 31s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.012661811895668507 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        8            465.242   0.0126618     0.0112687   0.0105576    0.998483 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:32:53. Total running time: 9min 1s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.012944738380610943 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        9            519.606   0.0129447     0.0115298   0.0107881    0.998365 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-33-36.838009)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 10: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-33-36.838009), metrics={'nDCG@10': 0.013244611211121082, 'Recall@10': 0.011797144077718258, 'EPC@10': 0.011025985702872276, 'Gini@10': 0.9982450604438782, 'best_nDCG@10': 0.013244611211121082, 'loss': 0.1230824813246727, 'ram_peak_mb': 9599.31640625, 'vram_peak_mb': 2104.5927734375, 'epoch': 9, 'step': 5820}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:33:23. Total running time: 9min 31s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.012944738380610943 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001        9            519.606   0.0129447     0.0115298   0.0107881    0.998365 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:33:53. Total running time: 10min 1s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.013244611211121082 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10     EPC@10     Gini@10 │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       10            573.959   0.0132446     0.0117971   0.011026    0.998245 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:34:23. Total running time: 10min 31s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.013244611211121082 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10     EPC@10     Gini@10 │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       10            573.959   0.0132446     0.0117971   0.011026    0.998245 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-34-31.336624)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 11: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-34-31.336624), metrics={'nDCG@10': 0.013517918065190315, 'Recall@10': 0.012056832201778889, 'EPC@10': 0.011247240006923676, 'Gini@10': 0.9981382489204407, 'best_nDCG@10': 0.013517918065190315, 'loss': 0.11641916632652283, 'ram_peak_mb': 9599.4296875, 'vram_peak_mb': 2104.5927734375, 'epoch': 10, 'step': 6402}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-35-26.309632)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 12: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-35-26.309632), metrics={'nDCG@10': 0.01386566273868084, 'Recall@10': 0.012407797388732433, 'EPC@10': 0.011527924798429012, 'Gini@10': 0.9980323314666748, 'best_nDCG@10': 0.01386566273868084, 'loss': 0.11053726077079773, 'ram_peak_mb': 9599.66015625, 'vram_peak_mb': 2104.5927734375, 'epoch': 11, 'step': 6984}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:34:53. Total running time: 11min 1s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.013517918065190315 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       11            628.299   0.0135179     0.0120568   0.0112472    0.998138 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:35:24. Total running time: 11min 31s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.013517918065190315 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       11            628.299   0.0135179     0.0120568   0.0112472    0.998138 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:35:54. Total running time: 12min 1s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01386566273868084 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       12            684.647   0.0138657     0.0124078   0.0115279    0.998032 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-36-21.005294)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 13: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-36-21.005294), metrics={'nDCG@10': 0.014177951961755753, 'Recall@10': 0.012707517482340336, 'EPC@10': 0.011779075488448143, 'Gini@10': 0.9979320168495178, 'best_nDCG@10': 0.014177951961755753, 'loss': 0.10547211021184921, 'ram_peak_mb': 9598.9140625, 'vram_peak_mb': 2104.5927734375, 'epoch': 12, 'step': 7566}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-37-15.296063)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 14: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-37-15.296063), metrics={'nDCG@10': 0.014438877813518047, 'Recall@10': 0.012900358997285366, 'EPC@10': 0.01199511718004942, 'Gini@10': 0.9978166818618774, 'best_nDCG@10': 0.014438877813518047, 'loss': 0.10069409757852554, 'ram_peak_mb': 9599.99609375, 'vram_peak_mb': 2104.5927734375, 'epoch': 13, 'step': 8148}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:36:24. Total running time: 12min 31s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.014177951961755753 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       13            739.006    0.014178     0.0127075   0.0117791    0.997932 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:36:54. Total running time: 13min 1s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.014177951961755753 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       13            739.006    0.014178     0.0127075   0.0117791    0.997932 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:37:24. Total running time: 13min 31s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.014438877813518047 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       14             793.37   0.0144389     0.0129004   0.0119951    0.997817 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-38-10.130034)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 15: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-38-10.130034), metrics={'nDCG@10': 0.01462572906166315, 'Recall@10': 0.01303060445934534, 'EPC@10': 0.012149009853601456, 'Gini@10': 0.9977061748504639, 'best_nDCG@10': 0.01462572906166315, 'loss': 0.09619548916816711, 'ram_peak_mb': 9600.08203125, 'vram_peak_mb': 2104.5927734375, 'epoch': 14, 'step': 8730}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:37:54. Total running time: 14min 1s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.014438877813518047 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       14             793.37   0.0144389     0.0129004   0.0119951    0.997817 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:38:24. Total running time: 14min 31s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01462572906166315 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10     EPC@10     Gini@10 │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       15             847.69   0.0146257     0.0130306   0.012149    0.997706 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:38:54. Total running time: 15min 1s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01462572906166315 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10     EPC@10     Gini@10 │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       15             847.69   0.0146257     0.0130306   0.012149    0.997706 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-39-04.703794)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 16: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-39-04.703794), metrics={'nDCG@10': 0.014891235157847404, 'Recall@10': 0.013292260468006134, 'EPC@10': 0.012371149845421314, 'Gini@10': 0.9975970983505249, 'best_nDCG@10': 0.014891235157847404, 'loss': 0.09212551265954971, 'ram_peak_mb': 9601.98046875, 'vram_peak_mb': 2104.5927734375, 'epoch': 15, 'step': 9312}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-39-58.626778)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 17: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-39-58.626778), metrics={'nDCG@10': 0.015111114829778671, 'Recall@10': 0.01351254153996706, 'EPC@10': 0.012550548650324345, 'Gini@10': 0.9975098371505737, 'best_nDCG@10': 0.015111114829778671, 'loss': 0.08833526074886322, 'ram_peak_mb': 9601.234375, 'vram_peak_mb': 2104.5927734375, 'epoch': 16, 'step': 9894}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:39:24. Total running time: 15min 31s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.014891235157847404 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       16            902.031   0.0148912     0.0132923   0.0123711    0.997597 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:39:54. Total running time: 16min 1s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.014891235157847404 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       16            902.031   0.0148912     0.0132923   0.0123711    0.997597 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:40:24. Total running time: 16min 32s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.015111114829778671 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       17            956.366   0.0151111     0.0135125   0.0125505     0.99751 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-40-52.749770)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 18: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-40-52.749770), metrics={'nDCG@10': 0.015221133828163147, 'Recall@10': 0.013613225892186165, 'EPC@10': 0.01264281291514635, 'Gini@10': 0.997401237487793, 'best_nDCG@10': 0.015221133828163147, 'loss': 0.08499734848737717, 'ram_peak_mb': 9600.46875, 'vram_peak_mb': 2104.5927734375, 'epoch': 17, 'step': 10476}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-41-47.174335)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 19: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-41-47.174335), metrics={'nDCG@10': 0.01534622348845005, 'Recall@10': 0.013757661916315556, 'EPC@10': 0.012735235504806042, 'Gini@10': 0.9972891211509705, 'best_nDCG@10': 0.01534622348845005, 'loss': 0.08221707493066788, 'ram_peak_mb': 9601.546875, 'vram_peak_mb': 2104.5927734375, 'epoch': 18, 'step': 11058}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:40:54. Total running time: 17min 2s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.015221133828163147 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       18            1010.71   0.0152211     0.0136132   0.0126428    0.997401 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:41:24. Total running time: 17min 32s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.015221133828163147 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       18            1010.71   0.0152211     0.0136132   0.0126428    0.997401 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:41:54. Total running time: 18min 2s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01534622348845005 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       19            1065.06   0.0153462     0.0137577   0.0127352    0.997289 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-42-41.933861)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 20: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-42-41.933861), metrics={'nDCG@10': 0.015510646626353264, 'Recall@10': 0.013916116207838058, 'EPC@10': 0.01286674477159977, 'Gini@10': 0.9971764087677002, 'best_nDCG@10': 0.015510646626353264, 'loss': 0.07951557636260986, 'ram_peak_mb': 9600.7109375, 'vram_peak_mb': 2104.5927734375, 'epoch': 19, 'step': 11640}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:42:24. Total running time: 18min 32s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01534622348845005 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       19            1065.06   0.0153462     0.0137577   0.0127352    0.997289 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:42:54. Total running time: 19min 2s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.015510646626353264 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       20            1119.38   0.0155106     0.0139161   0.0128667    0.997176 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:43:25. Total running time: 19min 32s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.015510646626353264 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       20            1119.38   0.0155106     0.0139161   0.0128667    0.997176 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-43-36.534704)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 21: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-43-36.534704), metrics={'nDCG@10': 0.01572423242032528, 'Recall@10': 0.01407923549413681, 'EPC@10': 0.013039177283644676, 'Gini@10': 0.9970859289169312, 'best_nDCG@10': 0.01572423242032528, 'loss': 0.07693996280431747, 'ram_peak_mb': 9602.5546875, 'vram_peak_mb': 2104.5927734375, 'epoch': 20, 'step': 12222}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-44-31.071598)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 22: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-44-31.071598), metrics={'nDCG@10': 0.015872720628976822, 'Recall@10': 0.014277258887887001, 'EPC@10': 0.013155833818018436, 'Gini@10': 0.9969714879989624, 'best_nDCG@10': 0.015872720628976822, 'loss': 0.0747910663485527, 'ram_peak_mb': 9601.8515625, 'vram_peak_mb': 2104.5927734375, 'epoch': 21, 'step': 12804}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:43:55. Total running time: 20min 2s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01572423242032528 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       21            1173.72   0.0157242     0.0140792   0.0130392    0.997086 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:44:25. Total running time: 20min 32s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01572423242032528 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       21            1173.72   0.0157242     0.0140792   0.0130392    0.997086 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:44:55. Total running time: 21min 2s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.015872720628976822 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       22            1228.11   0.0158727     0.0142773   0.0131558    0.996971 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-45-25.489879)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 23: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-45-25.489879), metrics={'nDCG@10': 0.01607605628669262, 'Recall@10': 0.014504048973321915, 'EPC@10': 0.013320213183760643, 'Gini@10': 0.9968506097793579, 'best_nDCG@10': 0.01607605628669262, 'loss': 0.07224563509225845, 'ram_peak_mb': 9601.9296875, 'vram_peak_mb': 2104.5927734375, 'epoch': 22, 'step': 13386}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-46-19.737232)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 24: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-46-19.737232), metrics={'nDCG@10': 0.016119271516799927, 'Recall@10': 0.0145651176571846, 'EPC@10': 0.013347846455872059, 'Gini@10': 0.996738612651825, 'best_nDCG@10': 0.016119271516799927, 'loss': 0.07033801078796387, 'ram_peak_mb': 9602.0, 'vram_peak_mb': 2104.5927734375, 'epoch': 23, 'step': 13968}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:45:25. Total running time: 21min 32s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.015872720628976822 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       22            1228.11   0.0158727     0.0142773   0.0131558    0.996971 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:45:55. Total running time: 22min 2s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01607605628669262 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       23            1282.67   0.0160761      0.014504   0.0133202    0.996851 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:46:25. Total running time: 22min 32s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.016119271516799927 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       24            1336.83   0.0161193     0.0145651   0.0133478    0.996739 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-47-14.335117)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 25: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-47-14.335117), metrics={'nDCG@10': 0.016201753169298172, 'Recall@10': 0.01456831768155098, 'EPC@10': 0.013417338021099567, 'Gini@10': 0.9966222643852234, 'best_nDCG@10': 0.016201753169298172, 'loss': 0.06854813545942307, 'ram_peak_mb': 9603.04296875, 'vram_peak_mb': 2104.5927734375, 'epoch': 24, 'step': 14550}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:46:55. Total running time: 23min 2s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.016119271516799927 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       24            1336.83   0.0161193     0.0145651   0.0133478    0.996739 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:47:25. Total running time: 23min 32s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.016201753169298172 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       25            1391.16   0.0162018     0.0145683   0.0134173    0.996622 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:47:55. Total running time: 24min 2s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.016201753169298172 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       25            1391.16   0.0162018     0.0145683   0.0134173    0.996622 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-48-08.696836)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 26: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-48-08.696836), metrics={'nDCG@10': 0.01637049950659275, 'Recall@10': 0.014774270355701447, 'EPC@10': 0.013556573539972305, 'Gini@10': 0.9964925646781921, 'best_nDCG@10': 0.01637049950659275, 'loss': 0.06675012409687042, 'ram_peak_mb': 9602.0859375, 'vram_peak_mb': 2104.5927734375, 'epoch': 25, 'step': 15132}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-49-03.357038)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 27: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-49-03.357038), metrics={'nDCG@10': 0.01651383750140667, 'Recall@10': 0.014906627126038074, 'EPC@10': 0.013666024431586266, 'Gini@10': 0.9963809251785278, 'best_nDCG@10': 0.01651383750140667, 'loss': 0.06497739255428314, 'ram_peak_mb': 9602.21875, 'vram_peak_mb': 2104.5927734375, 'epoch': 26, 'step': 15714}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:48:25. Total running time: 24min 32s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01637049950659275 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       26            1445.54   0.0163705     0.0147743   0.0135566    0.996493 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:48:55. Total running time: 25min 3s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01637049950659275 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       26            1445.54   0.0163705     0.0147743   0.0135566    0.996493 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:49:25. Total running time: 25min 33s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01651383750140667 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10     EPC@10     Gini@10 │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       27            1499.88   0.0165138     0.0149066   0.013666    0.996381 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-49-57.875021)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 28: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-49-57.875021), metrics={'nDCG@10': 0.016633642837405205, 'Recall@10': 0.01506758201867342, 'EPC@10': 0.013761384412646294, 'Gini@10': 0.9962348937988281, 'best_nDCG@10': 0.016633642837405205, 'loss': 0.06337049603462219, 'ram_peak_mb': 9602.25, 'vram_peak_mb': 2104.5927734375, 'epoch': 27, 'step': 16296}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-50-52.358520)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 29: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-50-52.358520), metrics={'nDCG@10': 0.0168143380433321, 'Recall@10': 0.015233082696795464, 'EPC@10': 0.013899857178330421, 'Gini@10': 0.9960924386978149, 'best_nDCG@10': 0.0168143380433321, 'loss': 0.06206807494163513, 'ram_peak_mb': 9602.2421875, 'vram_peak_mb': 2104.5927734375, 'epoch': 28, 'step': 16878}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:49:55. Total running time: 26min 3s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01651383750140667 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10     EPC@10     Gini@10 │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       27            1499.88   0.0165138     0.0149066   0.013666    0.996381 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:50:25. Total running time: 26min 33s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.016633642837405205 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       28            1556.24   0.0166336     0.0150676   0.0137614    0.996235 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:50:55. Total running time: 27min 3s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.0168143380433321 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       29            1610.57   0.0168143     0.0152331   0.0138999    0.996092 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-51-46.832201)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 30: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-51-46.832201), metrics={'nDCG@10': 0.016932476311922073, 'Recall@10': 0.0153605742380023, 'EPC@10': 0.01399314310401678, 'Gini@10': 0.9959489107131958, 'best_nDCG@10': 0.016932476311922073, 'loss': 0.06054016947746277, 'ram_peak_mb': 9602.29296875, 'vram_peak_mb': 2104.5927734375, 'epoch': 29, 'step': 17460}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:51:25. Total running time: 27min 33s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.0168143380433321 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       29            1610.57   0.0168143     0.0152331   0.0138999    0.996092 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:51:55. Total running time: 28min 3s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.016932476311922073 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       30            1664.91   0.0169325     0.0153606   0.0139931    0.995949 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:52:25. Total running time: 28min 33s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.016932476311922073 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       30            1664.91   0.0169325     0.0153606   0.0139931    0.995949 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-52-42.056115)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 31: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-52-42.056115), metrics={'nDCG@10': 0.01697510853409767, 'Recall@10': 0.015375773422420025, 'EPC@10': 0.014035763218998909, 'Gini@10': 0.9958152770996094, 'best_nDCG@10': 0.01697510853409767, 'loss': 0.05901370570063591, 'ram_peak_mb': 9602.41796875, 'vram_peak_mb': 2104.5927734375, 'epoch': 30, 'step': 18042}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-53-35.891814)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 32: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-53-35.891814), metrics={'nDCG@10': 0.017122972756624222, 'Recall@10': 0.015575382858514786, 'EPC@10': 0.014158496633172035, 'Gini@10': 0.9956687092781067, 'best_nDCG@10': 0.017122972756624222, 'loss': 0.05788825824856758, 'ram_peak_mb': 9602.46484375, 'vram_peak_mb': 2104.5927734375, 'epoch': 31, 'step': 18624}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:52:56. Total running time: 29min 3s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01697510853409767 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       31            1719.22   0.0169751     0.0153758   0.0140358    0.995815 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:53:26. Total running time: 29min 33s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.01697510853409767 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       31            1719.22   0.0169751     0.0153758   0.0140358    0.995815 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:53:56. Total running time: 30min 3s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.017122972756624222 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       32            1773.57    0.017123     0.0155754   0.0141585    0.995669 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-54-30.198543)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 33: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-54-30.198543), metrics={'nDCG@10': 0.0171696487814188, 'Recall@10': 0.015612558461725712, 'EPC@10': 0.014192789793014526, 'Gini@10': 0.9955133199691772, 'best_nDCG@10': 0.0171696487814188, 'loss': 0.05668940767645836, 'ram_peak_mb': 9601.6328125, 'vram_peak_mb': 2104.5927734375, 'epoch': 32, 'step': 19206}, validation_spec=None)
+[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-55-24.762858)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 34: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-55-24.762858), metrics={'nDCG@10': 0.017306070774793625, 'Recall@10': 0.01574244536459446, 'EPC@10': 0.01430407166481018, 'Gini@10': 0.9953226447105408, 'best_nDCG@10': 0.017306070774793625, 'loss': 0.055668290704488754, 'ram_peak_mb': 9602.671875, 'vram_peak_mb': 2104.5927734375, 'epoch': 33, 'step': 19788}, validation_spec=None)
+
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:54:26. Total running time: 30min 33s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.017122972756624222 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       32            1773.57    0.017123     0.0155754   0.0141585    0.995669 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:54:56. Total running time: 31min 3s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.0171696487814188 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       33             1827.9   0.0171696     0.0156126   0.0141928    0.995513 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Trial status: 1 RUNNING
+Current time: 2026-08-03 13:55:26. Total running time: 31min 33s
+Logical resource usage: 0.05/12 CPUs, 0/2 GPUs (0.0/1.0 accelerator_type:G)
+Current best trial: 91fef_00000 with nDCG@10=0.017306070774793625 and params={'embedding_size': 64, 'n_layers': 3, 'reg_weight': 0.0001, 'batch_size': 4096, 'epochs': 1000, 'learning_rate': 0.001}
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trial name                          status       embedding_size     n_layers     reg_weight     batch_size     epochs     learning_rate     iter     total time (s)     nDCG@10     Recall@10      EPC@10     Gini@10 │
+├───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ LightGCN_LyricalMacaqueOfEmphasis   RUNNING                  64            3         0.0001           4096       1000             0.001       34            1882.23   0.0173061     0.0157424   0.0143041    0.995323 │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[36m(RayTrainWorker pid=4028311)[0m Checkpoint successfully created at: Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-56-19.400519)
+[36m(RayTrainWorker pid=4028311)[0m Reporting training result 35: TrainingReport(checkpoint=Checkpoint(filesystem=local, path=/home/vincenzo/warprec/experiment/lightgcn/amazon_book/amazon_book/ray_results/ray_train_trial_id=91fef_00000/checkpoint_2026-08-03_13-56-19.400519), metrics={'nDCG@10': 0.017390886321663857, 'Recall@10': 0.015881825238466263, 'EPC@10': 0.014360648579895496, 'Gini@10': 0.9951598644256592, 'best_nDCG@10': 0.017390886321663857, 'loss': 0.05465612933039665, 'ram_peak_mb': 9602.72265625, 'vram_peak_mb': 2104.5927734375, 'epoch': 34, 'step': 20370}, validation_spec=None)

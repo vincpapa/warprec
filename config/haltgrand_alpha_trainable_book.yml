@@ -1,0 +1,66 @@
+reader:
+  loading_strategy: split
+  data_type: transaction
+  reading_method: local
+  rating_type: implicit
+  labels:
+    user_id_label: user_id
+    item_id_label: item_id
+  dtypes:
+    user_id_type: int64
+    item_id_type: int64
+  split:
+    local_path: datasets/amazon_book/
+    ext: .tsv
+writer:
+  dataset_name: amazon_book
+  writing_method: local
+  local_experiment_path: experiment/haltgrand/amazon_book
+  save_split: True
+models:
+  # Run B: alpha_mode=trainable, alpha_init=1.5, alpha_max=2.0 -- alpha
+  # starts at ~1.5 (same nominal initial value as Run A, for comparability)
+  # and is free to move via gradient descent, but can never exceed 2.0.
+  # Compare against haltgrand_alpha_fixed.yml (Run A).
+  HALTGRAND:
+    optimization:
+      strategy: grid
+      device: cuda
+      parallel_trials: 1
+      checkpoint_to_keep: 1
+    early_stopping:
+      monitor: score
+      patience: 5
+      grace_period: 20
+    embedding_size: 64
+    n_layers: 6
+    diffusion_step: 0.0
+    eps_delta: 0.5
+    n_probes: 20
+    n_anchors: 32
+    temperature: 0.2
+    gamma: 20.0
+    lambda0: 0.0001
+    lambda_ponder: 0.001
+    lambda_unif: 0.01
+    reg_weight: 0.01
+    alpha_mode: trainable
+    alpha_init: 1.0
+    alpha_max: 0.0
+    batch_size: 4096
+    epochs: 300
+    learning_rate: 0.001
+evaluation:
+  full_evaluation_on_report: True
+  validation_metric: nDCG@10
+  top_k: [10]
+  metrics: [nDCG, Recall, EPC, Gini]
+  strategy: full
+  #strategy: sampled
+  #num_negatives: 100
+  batch_size: 1024
+  seed: 42
+general:
+  device: cuda
+  cuda_visible_devices: [0]
+  time_report: False

@@ -1,0 +1,45 @@
+reader:
+  loading_strategy: split
+  data_type: transaction
+  reading_method: local
+  rating_type: implicit
+  labels:
+    user_id_label: user_id
+    item_id_label: item_id
+  dtypes:
+    user_id_type: int64
+    item_id_type: int64
+  split:
+    local_path: datasets/amazon_book/
+    ext: .tsv
+writer:
+  dataset_name: amazon_book
+  writing_method: local
+  local_experiment_path: experiment/lightgcn/amazon_book
+  save_split: True
+models:
+  # Models used in the design pipeline are expected to have one value per
+  # hyperparameter (no search space).
+  LightGCN:
+    early_stopping:
+      monitor: score
+      patience: 5
+      grace_period: 20
+    embedding_size: 64 #[64, 128, 256, 512]
+    n_layers: 3
+    reg_weight: 0.0001
+    batch_size: 4096
+    epochs: 1000
+    learning_rate: 0.001
+evaluation:
+  full_evaluation_on_report: True
+  validation_metric: nDCG@10
+  top_k: [10]
+  metrics: [nDCG, Recall, EPC, Gini]
+  strategy: full
+  batch_size: 1024
+  seed: 42
+general:
+  device: cuda
+  cuda_visible_devices: [0]
+  time_report: False
